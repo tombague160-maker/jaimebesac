@@ -51,15 +51,24 @@ docker compose up -d
 - **Avant d'exposer sur le web** : place l'app derrière un reverse proxy HTTPS (SWAG / nginx / Caddy).
   Le cookie de session est `secure` en production, donc **HTTPS est requis** pour se connecter.
 
-### Image `latest` pour l'OMV (optionnel)
+### Déploiement OMV par image (recommandé sur NAS) — `docker-compose.omv.yml`
 
-Le workflow `.github/workflows/docker-publish.yml` construit et pousse
-`ghcr.io/<owner>/jaimebesac:latest` sur chaque tag `v*` (ou manuellement). Sur l'OMV, remplace
-`build: .` par `image: ghcr.io/<owner>/jaimebesac:latest` dans `docker-compose.yml` puis :
+Sur un NAS on tire une image prête à l'emploi (comme Jellyfin) plutôt que de builder sur place.
+Le fichier **`docker-compose.omv.yml`** est prêt pour ça (pull GHCR + bind mount `/srv/docker/jaimebesac/data`) ;
+son en-tête liste les étapes. En résumé :
+
+1. Publier l'image : onglet **Actions → Publish Docker image → Run workflow** (ou pousser un tag `v*`).
+   Rendre ensuite le package GHCR **public** (ou `docker login ghcr.io` sur l'OMV).
+2. `sudo mkdir -p /srv/docker/jaimebesac/data && sudo chown -R 1001:1001 /srv/docker/jaimebesac/data`
+   (l'app tourne en uid 1001).
+3. Remplir les secrets dans le fichier, puis :
 
 ```bash
-docker compose pull && docker compose up -d
+docker compose -f docker-compose.omv.yml up -d
+docker compose -f docker-compose.omv.yml pull   # pour mettre à jour ensuite
 ```
+
+`docker-compose.yml` (avec `build: .`) reste utile pour builder localement / sur une machine avec le code.
 
 ## Actualités
 

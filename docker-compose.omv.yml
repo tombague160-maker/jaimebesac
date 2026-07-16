@@ -1,0 +1,44 @@
+# Déploiement serveur (OMV / Linux) — pull d'une image prête à l'emploi (comme Jellyfin).
+#
+# Prérequis (une seule fois) :
+#   1) Publier l'image : depuis GitHub → onglet "Actions" → "Publish Docker image" → "Run workflow"
+#      (ou pousse un tag  git tag v0.1.0 && git push origin v0.1.0 ). Rends ensuite le package
+#      GHCR "public" (Repo → Packages → jaimebesac → Package settings → Change visibility),
+#      sinon fais  docker login ghcr.io  sur l'OMV.
+#   2) Créer le dossier de données et lui donner le bon propriétaire (l'app tourne en uid 1001) :
+#        sudo mkdir -p /srv/docker/jaimebesac/data
+#        sudo chown -R 1001:1001 /srv/docker/jaimebesac/data
+#   3) Générer le hash du mot de passe sur ton PC :  npm run auth:hash -- "ton-mot-de-passe"
+#      et un secret :  openssl rand -hex 32   (idem pour CRON_SECRET)
+#   4) Remplir AUTH_EMAIL / AUTH_PASSWORD_HASH / SESSION_SECRET / CRON_SECRET ci-dessous.
+#
+# Puis :  docker compose -f docker-compose.omv.yml up -d
+#
+# ⚠️ Mets l'app derrière un reverse proxy HTTPS (SWAG/nginx) avant de l'exposer sur le web :
+#    le cookie de session est "secure" en production → la connexion ne marche qu'en HTTPS.
+services:
+  jaimebesac:
+    image: ghcr.io/tombague160-maker/jaimebesac:latest
+    container_name: jaimebesac
+    environment:
+      - TZ=Europe/Paris
+      # --- Authentification (obligatoire) ---
+      - AUTH_EMAIL=toi@exemple.fr
+      - AUTH_PASSWORD_HASH=colle-ici-le-hash-de-npm-run-auth-hash
+      - SESSION_SECRET=colle-ici-un-secret-de-64-caracteres
+      - SESSION_TTL_SECONDS=2592000
+      # --- Cron de synchronisation RSS (optionnel) ---
+      - CRON_SECRET=colle-ici-un-autre-secret
+      # --- Base SQLite (dans le volume) ---
+      - DATABASE_URL=file:/data/dev.db
+    volumes:
+      - /srv/docker/jaimebesac/data:/data
+    ports:
+      - 3000:3000            # change le port de gauche si 3000 est déjà pris (ex. 8097:3000)
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
