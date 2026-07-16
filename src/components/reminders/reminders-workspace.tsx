@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Bell, CheckCircle2, Clock3, MessageSquarePlus, Plus, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,10 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { useWorkspace, useWorkspaceValue } from "@/components/workspace-provider";
 import { channelLabels, priorityConfig, reminderStatusConfig, reminderTypeLabels } from "@/lib/constants";
 import { addDaysIso, todayIso } from "@/lib/dates";
+import { isOverdue } from "@/lib/reminders";
 import { formatDate, getClientName } from "@/lib/utils";
 import type { Priority, Reminder, ReminderChannel, ReminderStatus, ReminderType } from "@/types";
 
-const today = todayIso();
 const reminderTypes = Object.keys(reminderTypeLabels) as ReminderType[];
 const channels = Object.keys(channelLabels) as ReminderChannel[];
 
@@ -27,20 +27,29 @@ export function RemindersWorkspace() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [notice, setNotice] = useState("Les changements de statut sont sauvegardés automatiquement.");
+  const today = todayIso();
 
-  const filteredReminders = useMemo(() => {
-    const lowered = query.toLowerCase();
-    return reminders.filter((reminder) =>
-      `${reminder.title} ${reminder.notes} ${getClientName(reminder.clientId, clients)}`
-        .toLowerCase()
-        .includes(lowered),
-    );
-  }, [clients, query, reminders]);
+  const lowered = query.toLowerCase();
+  const filteredReminders = reminders.filter((reminder) =>
+    `${reminder.title} ${reminder.notes} ${getClientName(reminder.clientId, clients)} ${reminderTypeLabels[reminder.type] ?? ""}`
+      .toLowerCase()
+      .includes(lowered),
+  );
 
   const grouped = {
-    overdue: filteredReminders.filter((item) => item.status === "overdue"),
-    today: filteredReminders.filter((item) => item.dueDate === today && item.status === "todo"),
-    upcoming: filteredReminders.filter((item) => item.dueDate > today && ["todo", "postponed"].includes(item.status)),
+    overdue: filteredReminders.filter((item) => isOverdue(item, today)),
+    today: filteredReminders.filter(
+      (item) =>
+        !isOverdue(item, today) &&
+        item.dueDate === today &&
+        ["todo", "postponed"].includes(item.status),
+    ),
+    upcoming: filteredReminders.filter(
+      (item) =>
+        !isOverdue(item, today) &&
+        item.dueDate > today &&
+        ["todo", "postponed"].includes(item.status),
+    ),
     done: filteredReminders.filter((item) => item.status === "done"),
   };
 
@@ -60,6 +69,19 @@ export function RemindersWorkspace() {
       ),
     );
     setNotice(message);
+  }
+
+  function addNote(id: string) {
+    // Append a history note without changing the reminder status (previously this
+    // silently reset the reminder to "todo", resurrecting completed ones).
+    setReminders((current) =>
+      current.map((reminder) =>
+        reminder.id === id
+          ? { ...reminder, history: [`Note ajoutée · ${formatDate(today)}`, ...reminder.history] }
+          : reminder,
+      ),
+    );
+    setNotice("Note ajoutée à l'historique.");
   }
 
   function createReminder(event: React.FormEvent<HTMLFormElement>) {
@@ -145,6 +167,7 @@ export function RemindersWorkspace() {
             reminder={selectedReminder}
             clientName={getClientName(selectedReminder.clientId, clients)}
             onStatus={(status, message) => updateStatus(selectedReminder.id, status, message)}
+            onAddNote={() => addNote(selectedReminder.id)}
           />
         ) : null}
       </Drawer>
@@ -297,10 +320,12 @@ function ReminderDetail({
   reminder,
   clientName,
   onStatus,
+  onAddNote,
 }: {
   reminder: Reminder;
   clientName: string;
   onStatus: (status: ReminderStatus, message: string) => void;
+  onAddNote: () => void;
 }) {
   return (
     <div className="space-y-5">
@@ -320,8 +345,8 @@ function ReminderDetail({
       <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
         <p className="text-xs font-black uppercase text-[#596A76]">Historique</p>
         <div className="mt-2 space-y-2">
-          {reminder.history.map((entry) => (
-            <p key={entry} className="text-sm font-bold text-[#18232B]">
+          {reminder.history.map((entry, index) => (
+            <p key={`${index}-${entry}`} className="text-sm font-bold text-[#18232B]">
               {entry}
             </p>
           ))}
@@ -336,7 +361,7 @@ function ReminderDetail({
           <Clock3 className="h-4 w-4" />
           Reporter
         </Button>
-        <Button variant="secondary" onClick={() => onStatus("todo", "Note ajoutée à l'historique.")}>
+        <Button variant="secondary" onClick={onAddNote}>
           <MessageSquarePlus className="h-4 w-4" />
           Ajouter une note après relance
         </Button>

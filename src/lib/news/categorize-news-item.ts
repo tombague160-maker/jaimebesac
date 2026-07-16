@@ -22,7 +22,7 @@ export function categorizeNewsItem(title: string, summary = "", tags: string[] =
   }
 
   if (/(etudiant|universite|campus|crous)/.test(haystack)) {
-    return "vie etudiante";
+    return "vie étudiante";
   }
 
   if (/(association|benevole|solidarite|collecte)/.test(haystack)) {

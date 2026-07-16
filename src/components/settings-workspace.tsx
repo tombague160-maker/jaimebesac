@@ -28,6 +28,21 @@ export function SettingsWorkspace() {
   const [notice, setNotice] = useState("Chaque réglage est sauvegardé automatiquement.");
   const [sourceModalOpen, setSourceModalOpen] = useState(false);
   const [offerModalOpen, setOfferModalOpen] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<
+    { kind: "source" | "offer"; id: string; name: string } | null
+  >(null);
+
+  function confirmDelete() {
+    if (!pendingDelete) return;
+    if (pendingDelete.kind === "source") {
+      setNewsSources((current) => current.filter((item) => item.id !== pendingDelete.id));
+      setNotice("Source supprimée.");
+    } else {
+      setServiceOffers((current) => current.filter((item) => item.id !== pendingDelete.id));
+      setNotice("Prestation supprimée.");
+    }
+    setPendingDelete(null);
+  }
 
   function exportWorkspace() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -181,7 +196,7 @@ export function SettingsWorkspace() {
 
       <section className="grid gap-5 xl:grid-cols-3">
         <Card>
-          <CardHeader className="flex-row items-center justify-between gap-3">
+          <CardHeader className="flex flex-row items-center justify-between gap-3">
             <SectionHeading title="Sources d'actualité" />
             <Button size="icon" variant="secondary" onClick={() => setSourceModalOpen(true)} aria-label="Ajouter une source">
               <Plus className="h-4 w-4" />
@@ -195,7 +210,7 @@ export function SettingsWorkspace() {
                     <p className="font-black text-[#18232B]">{source.name}</p>
                     <p className="mt-1 break-all text-xs font-bold text-[#596A76]">{source.rssUrl || source.url}</p>
                   </div>
-                  <div className="flex shrink-0 items-center gap-1">
+                  <div className="flex shrink-0 items-center gap-3">
                     <button
                       onClick={() => setNewsSources((current) => current.map((item) => item.id === source.id ? { ...item, isActive: !item.isActive } : item))}
                       className="rounded-full"
@@ -206,7 +221,7 @@ export function SettingsWorkspace() {
                     <Button
                       size="icon"
                       variant="ghost"
-                      onClick={() => setNewsSources((current) => current.filter((item) => item.id !== source.id))}
+                      onClick={() => setPendingDelete({ kind: "source", id: source.id, name: source.name })}
                       aria-label="Supprimer la source"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -236,7 +251,7 @@ export function SettingsWorkspace() {
         </Card>
 
         <Card>
-          <CardHeader className="flex-row items-center justify-between gap-3">
+          <CardHeader className="flex flex-row items-center justify-between gap-3">
             <SectionHeading title="Types de prestations" />
             <Button size="icon" variant="secondary" onClick={() => setOfferModalOpen(true)} aria-label="Ajouter une prestation">
               <Plus className="h-4 w-4" />
@@ -253,7 +268,7 @@ export function SettingsWorkspace() {
                   <Button
                     size="icon"
                     variant="ghost"
-                    onClick={() => setServiceOffers((current) => current.filter((item) => item.id !== offer.id))}
+                    onClick={() => setPendingDelete({ kind: "offer", id: offer.id, name: offer.name })}
                     aria-label="Supprimer la prestation"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -408,6 +423,32 @@ export function SettingsWorkspace() {
             <Button type="submit">Ajouter</Button>
           </div>
         </form>
+      </Modal>
+
+      <Modal
+        open={Boolean(pendingDelete)}
+        title="Confirmer la suppression"
+        subtitle={
+          pendingDelete
+            ? `« ${pendingDelete.name} » sera définitivement supprimé${pendingDelete.kind === "source" ? "e" : "e"}.`
+            : undefined
+        }
+        onClose={() => setPendingDelete(null)}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-[#596A76]">
+            Cette action est irréversible. La configuration (URL, fiabilité, catégorie) sera perdue.
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => setPendingDelete(null)}>
+              Annuler
+            </Button>
+            <Button variant="danger" onClick={confirmDelete}>
+              <Trash2 className="h-4 w-4" />
+              Supprimer
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

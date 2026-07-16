@@ -75,8 +75,10 @@ export function NewsWorkspace() {
     event.preventDefault();
     const formElement = event.currentTarget;
     const form = new FormData(formElement);
-    const sourceId = String(form.get("sourceId") || sources[0]?.id || "");
-    const sourceRecord = sources.find((entry) => entry.id === sourceId) ?? sources[0];
+    // Empty value = "Source manuelle" — keep it manual instead of falling back to
+    // the first configured RSS source.
+    const sourceId = String(form.get("sourceId") ?? "");
+    const sourceRecord = sources.find((entry) => entry.id === sourceId);
     const tags = String(form.get("tags") || "")
       .split(",")
       .map((tag) => tag.trim())
@@ -89,7 +91,7 @@ export function NewsWorkspace() {
       sourceId,
       sourceName: sourceRecord?.name ?? "Source manuelle",
       sourceUrl: sourceRecord?.url ?? "",
-      originalUrl: String(form.get("originalUrl") || sourceRecord?.url || "https://example.com"),
+      originalUrl: String(form.get("originalUrl") || sourceRecord?.url || ""),
       publishedAt: String(form.get("publishedAt") || new Date().toISOString().slice(0, 10)),
       category: form.get("category") as NewsCategory,
       tags,
@@ -154,6 +156,7 @@ export function NewsWorkspace() {
     };
     setContentIdeas((current) => [idea, ...current]);
     updateStatus(item.id, "content_planned", "Idée de contenu créée et sauvegardée.");
+    setSelectedId(null);
   }
 
   function addNewsToPlanning(item: NewsItem) {
@@ -173,6 +176,7 @@ export function NewsWorkspace() {
     };
     setCalendarEvents((current) => [calendarEvent, ...current]);
     updateStatus(item.id, "content_planned", "Actualité ajoutée et sauvegardée dans le planning.");
+    setSelectedId(null);
   }
 
   function createPublicationFromNews(item: NewsItem) {
@@ -194,6 +198,7 @@ export function NewsWorkspace() {
     };
     setPublications((current) => [publication, ...current]);
     updateStatus(item.id, "content_planned", "Publication créée et sauvegardée.");
+    setSelectedId(null);
   }
 
   return (
@@ -223,7 +228,7 @@ export function NewsWorkspace() {
       </Card>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="A traiter" value={String(items.filter((item) => item.status === "to_process").length)} />
+        <Metric label="A traiter" value={String(items.filter((item) => ["to_process", "interesting"].includes(item.status)).length)} />
         <Metric label="Score moyen" value={averageScore} />
         <Metric label="Sources actives" value={String(sources.filter((item) => item.isActive).length)} />
         <Metric label="Sujets urgents" value={String(items.filter((item) => item.urgencyLevel === "urgent").length)} />
@@ -511,7 +516,7 @@ function NewsDetail({
       <Info label="Tags" value={item.tags.join(", ")} />
       <Info label="Notes internes" value={item.notes || "Aucune note"} />
       <Info label="Idees possibles" value={item.contentIdeas.join(" - ") || "A definir"} />
-      {item.originalUrl ? (
+      {item.originalUrl && /^https?:\/\//i.test(item.originalUrl) ? (
         <a
           href={item.originalUrl}
           target="_blank"

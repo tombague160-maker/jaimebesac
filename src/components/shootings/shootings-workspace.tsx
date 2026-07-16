@@ -66,13 +66,19 @@ export function ShootingsWorkspace() {
   function createShooting(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    const startTime = String(form.get("startTime") || "10:00");
+    const endTime = String(form.get("endTime") || "12:00");
+    if (startTime && endTime && endTime <= startTime) {
+      setNotice("L'heure de fin doit être postérieure à l'heure de début.");
+      return;
+    }
     const newShooting: Shooting = {
       id: `shooting-local-${Date.now()}`,
       title: String(form.get("title") || "Nouveau tournage"),
       clientId: String(form.get("clientId") || ""),
       date: String(form.get("date") || addDaysIso(2)),
-      startTime: String(form.get("startTime") || "10:00"),
-      endTime: String(form.get("endTime") || "12:00"),
+      startTime,
+      endTime,
       location: String(form.get("location") || "Besançon"),
       contactName: String(form.get("contactName") || ""),
       contactPhone: String(form.get("contactPhone") || ""),
@@ -96,6 +102,12 @@ export function ShootingsWorkspace() {
   }
 
   function createPublicationFromShooting(shooting: Shooting) {
+    // Idempotent: don't create a second publication if one is already linked.
+    if (shooting.publicationId) {
+      setNotice("Une publication est déjà associée à ce tournage.");
+      return;
+    }
+
     const today = todayIso();
     const publication: Publication = {
       id: `publication-${crypto.randomUUID()}`,
@@ -109,13 +121,26 @@ export function ShootingsWorkspace() {
       hashtags: [],
       mediaUrl: "",
       status: "to_write",
-      clientValidationStatus: "pending",
+      clientValidationStatus: shooting.clientId ? "pending" : "not_required",
       notes: shooting.notes,
       createdAt: today,
       updatedAt: today,
     };
     setPublications((current) => [publication, ...current]);
-    setShootings((current) => current.map((item) => item.id === shooting.id ? { ...item, publicationId: publication.id, status: "editing", updatedAt: today } : item));
+    setShootings((current) =>
+      current.map((item) => {
+        if (item.id !== shooting.id) return item;
+        // Only advance to "editing" from an earlier stage — never regress a shooting
+        // that is already published/approved/archived.
+        const editingReached = shootingStages.indexOf(item.status) >= shootingStages.indexOf("editing");
+        return {
+          ...item,
+          publicationId: publication.id,
+          status: editingReached ? item.status : "editing",
+          updatedAt: today,
+        };
+      }),
+    );
     setNotice("Publication associée créée et sauvegardée.");
   }
 
@@ -197,9 +222,9 @@ export function ShootingsWorkspace() {
           ))}
         </section>
       ) : (
-        <section className="premium-scrollbar grid gap-3 overflow-x-auto pb-2 xl:grid-cols-5">
-          {shootingStages.slice(0, 5).map((stage) => (
-            <Card key={stage} className="min-w-[270px]">
+        <section className="premium-scrollbar flex gap-3 overflow-x-auto pb-2">
+          {shootingStages.map((stage) => (
+            <Card key={stage} className="w-[270px] shrink-0">
               <CardHeader>
                 <div className="flex items-center justify-between gap-2">
                   <Badge config={shootingStatusConfig[stage]} />
@@ -440,11 +465,11 @@ function ShootingDetail({
       </div>
       <div className="rounded-lg bg-[#FBFAF2] p-4">
         <p className="text-xs font-black uppercase text-[#596A76]">Timeline</p>
-        <div className="mt-3 grid grid-cols-5 gap-1">
-          {shootingStages.slice(0, 5).map((stage) => {
+        <div className="mt-3 flex gap-1">
+          {shootingStages.map((stage) => {
             const active = shootingStages.indexOf(stage) <= shootingStages.indexOf(shooting.status);
             return (
-              <div key={stage} className={cn("h-2 rounded-full", active ? "bg-[#5EADD3]" : "bg-[#D8E5EC]")} />
+              <div key={stage} className={cn("h-2 flex-1 rounded-full", active ? "bg-[#5EADD3]" : "bg-[#D8E5EC]")} />
             );
           })}
         </div>
