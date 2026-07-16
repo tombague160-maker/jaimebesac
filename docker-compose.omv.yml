@@ -24,7 +24,10 @@ services:
       - TZ=Europe/Paris
       # --- Authentification (obligatoire) ---
       - AUTH_EMAIL=toi@exemple.fr
-      - AUTH_PASSWORD_HASH=colle-ici-le-hash-de-npm-run-auth-hash
+      # ⚠️ Le hash contient des "$" que Docker Compose interprète : DOUBLE chaque
+      #    "$" en "$$" ici (ex. scrypt$$16384$$8$$1$$sel$$hash), sinon le hash est
+      #    tronqué et le login échoue.
+      - AUTH_PASSWORD_HASH=colle-ici-le-hash-avec-les-dollars-doubles
       - SESSION_SECRET=colle-ici-un-secret-de-64-caracteres
       - SESSION_TTL_SECONDS=2592000
       # --- Cron de synchronisation RSS (optionnel) ---
