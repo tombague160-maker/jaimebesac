@@ -29,25 +29,27 @@ import {
   shootingStatusConfig,
 } from "@/lib/constants";
 import { todayIso } from "@/lib/dates";
+import { countOverdue, isOverdue } from "@/lib/reminders";
 import { formatCurrency, formatDate, getClientName } from "@/lib/utils";
 import type { WorkspaceData } from "@/types";
 
-const today = todayIso();
-
-function getStatCards(data: WorkspaceData) {
+function getStatCards(data: WorkspaceData, today: string) {
   const { clients, contentIdeas, newsItems, publications, reminders, shootings } = data;
+  const highPriorityShootings = shootings.filter((item) =>
+    ["high", "urgent"].includes(item.priority),
+  ).length;
   return [
   {
-    label: "Tournages ce mois-ci",
+    label: "Tournages",
     value: shootings.length,
     icon: Clapperboard,
-    helper: "dont 3 à forte priorité",
+    helper: `dont ${highPriorityShootings} à forte priorité`,
   },
   {
     label: "Publications programmées",
     value: publications.filter((item) => ["scheduled", "approved"].includes(item.status)).length,
     icon: FileText,
-    helper: "sur les 10 prochains jours",
+    helper: "validées ou planifiées",
   },
   {
     label: "Clients actifs",
@@ -63,12 +65,12 @@ function getStatCards(data: WorkspaceData) {
   },
   {
     label: "Relances en retard",
-    value: reminders.filter((reminder) => reminder.status === "overdue").length,
+    value: countOverdue(reminders, today),
     icon: CalendarClock,
-    helper: "à traiter aujourd'hui",
+    helper: "échéance dépassée",
   },
   {
-    label: "Actus détectées",
+    label: "Actus du jour",
     value: newsItems.filter((item) => item.publishedAt === today).length,
     icon: Newspaper,
     helper: "veille éditoriale",
@@ -91,11 +93,20 @@ function getStatCards(data: WorkspaceData) {
 export function DashboardOverview() {
   const { data } = useWorkspace();
   const { calendarEvents, clients, newsItems, publications, reminders, shootings } = data;
-  const statCards = getStatCards(data);
+  const today = todayIso();
+  const statCards = getStatCards(data, today);
   const todayEvents = calendarEvents.filter((event) => event.date === today);
-  const nextShootings = [...shootings].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
-  const upcomingPublications = [...publications].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
-  const urgentReminders = reminders.filter((reminder) => ["overdue", "todo"].includes(reminder.status)).slice(0, 4);
+  const nextShootings = [...shootings]
+    .filter((item) => item.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(0, 4);
+  const upcomingPublications = [...publications]
+    .filter((item) => item.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(0, 4);
+  const urgentReminders = reminders
+    .filter((reminder) => isOverdue(reminder, today) || reminder.status === "todo")
+    .slice(0, 4);
   const importantNews = [...newsItems]
     .sort((a, b) => b.importanceScore - a.importanceScore)
     .slice(0, 4);

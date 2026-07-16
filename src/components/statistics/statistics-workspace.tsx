@@ -22,6 +22,8 @@ import { Select } from "@/components/ui/field";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { useWorkspace } from "@/components/workspace-provider";
 import { clientStatusConfig } from "@/lib/constants";
+import { todayIso } from "@/lib/dates";
+import { countOverdue } from "@/lib/reminders";
 import { brandColors, chartPalette, pastelColors } from "@/lib/theme";
 import { formatCurrency } from "@/lib/utils";
 
@@ -48,7 +50,7 @@ export function StatisticsWorkspace() {
         publications: publications.filter((item) => item.date.startsWith(key)).length,
         relances: reminders.filter((item) => item.dueDate.startsWith(key)).length,
         revenue: clients
-          .filter((client) => client.updatedAt.startsWith(key))
+          .filter((client) => (client.createdAt || client.updatedAt).startsWith(key))
           .reduce((sum, client) => sum + client.actualRevenue, 0),
       };
     });
@@ -95,7 +97,7 @@ export function StatisticsWorkspace() {
           </div>
           <div className="w-full sm:w-[220px]">
             <Select value={period} onChange={(event) => setPeriod(event.target.value)}>
-              <option value="30d">30 derniers jours</option>
+              <option value="30d">Ce mois-ci</option>
               <option value="3m">3 mois</option>
               <option value="6m">6 mois</option>
               <option value="year">Année</option>
@@ -216,7 +218,7 @@ export function StatisticsWorkspace() {
             <Insight label="Sources d'actualité utiles" value={String(new Set(newsItems.map((item) => item.sourceName)).size)} />
             <Insight label="Catégories fréquentes" value={String(new Set(newsItems.map((item) => item.category)).size)} />
             <Insight label="Relances effectuées" value={String(reminders.filter((item) => item.status === "done").length)} />
-            <Insight label="Relances en retard" value={String(reminders.filter((item) => item.status === "overdue").length)} />
+            <Insight label="Relances en retard" value={String(countOverdue(reminders, todayIso()))} />
             <Insight
               label="Taux validation publications"
               value={`${validationRate}%`}

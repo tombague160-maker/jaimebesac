@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useDialog } from "@/components/ui/use-dialog";
 
 interface DrawerProps {
   open: boolean;
@@ -13,12 +14,14 @@ interface DrawerProps {
 }
 
 export function Drawer({ open, title, subtitle, onClose, children }: DrawerProps) {
+  const dialogRef = useDialog(open, onClose);
   return (
     <AnimatePresence>
       {open ? (
         <>
           <motion.button
             aria-label="Fermer le panneau"
+            tabIndex={-1}
             className="fixed inset-0 z-40 bg-[#18232B]/18 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -26,7 +29,12 @@ export function Drawer({ open, title, subtitle, onClose, children }: DrawerProps
             onClick={onClose}
           />
           <motion.aside
-            className="fixed bottom-0 right-0 top-0 z-50 flex w-full max-w-[460px] flex-col border-l border-[#D8E5EC] bg-white shadow-[0_20px_80px_rgba(24,35,43,0.22)]"
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
+            tabIndex={-1}
+            className="fixed bottom-0 right-0 top-0 z-50 flex w-full max-w-[460px] flex-col border-l border-[#D8E5EC] bg-white shadow-[0_20px_80px_rgba(24,35,43,0.22)] outline-none"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}

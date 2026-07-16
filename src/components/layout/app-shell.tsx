@@ -14,6 +14,7 @@ import {
   FileText,
   Home,
   Lightbulb,
+  LogOut,
   Menu,
   Newspaper,
   Plus,
@@ -30,6 +31,7 @@ import { Modal } from "@/components/ui/modal";
 import { Label, Select, TextArea, TextInput } from "@/components/ui/field";
 import { useWorkspace } from "@/components/workspace-provider";
 import { addDaysIso, todayIso } from "@/lib/dates";
+import { countOverdue } from "@/lib/reminders";
 import { pastelColors } from "@/lib/theme";
 import { getClientName, getInitials } from "@/lib/utils";
 import type { Client, ContentIdea, NewsItem, Publication, Reminder, Shooting } from "@/types";
@@ -70,11 +72,23 @@ function todayLabels() {
       month: "long",
       year: "numeric",
     }).format(now),
-    input: now.toISOString().slice(0, 10),
+    input: todayIso(),
   };
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
+  // The login page renders outside the authenticated shell (no sidebar, no
+  // workspace data fetch).
+  if (pathname === "/login") {
+    return <>{children}</>;
+  }
+
+  return <AuthenticatedShell>{children}</AuthenticatedShell>;
+}
+
+function AuthenticatedShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { data, updateValue, saveStatus, error } = useWorkspace();
@@ -85,7 +99,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [toast, setToast] = useState<string | null>(null);
 
-  const urgentReminders = reminders.filter((reminder) => reminder.status === "overdue").length;
+  const urgentReminders = countOverdue(reminders, todayIso());
   const activeItem = navigation.find((item) => pathname.startsWith(item.href));
   const currentDate = useMemo(() => todayLabels(), []);
 
@@ -566,10 +580,22 @@ function SidebarContent({
         <div className="grid h-9 w-9 place-items-center rounded-lg bg-[#E7F5FA] text-xs font-black text-[#18232B]">
           {avatar}
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-black text-[#18232B]">{userName}</p>
           <p className="truncate text-xs text-[#596A76]">Pilotage éditorial</p>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Se déconnecter"
+          title="Se déconnecter"
+          onClick={async () => {
+            await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+            window.location.assign("/login");
+          }}
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );

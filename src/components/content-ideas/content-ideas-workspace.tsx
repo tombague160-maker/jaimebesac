@@ -109,6 +109,7 @@ export function ContentIdeasWorkspace() {
     };
     setShootings((current) => [shooting, ...current]);
     updateStatus(idea.id, "in_production", "Tournage créé et sauvegardé.");
+    setSelectedId(null);
   }
 
   function transformToPublication(idea: ContentIdea) {
@@ -131,6 +132,7 @@ export function ContentIdeasWorkspace() {
     };
     setPublications((current) => [publication, ...current]);
     updateStatus(idea.id, "planned", "Publication créée et sauvegardée.");
+    setSelectedId(null);
   }
 
   function addIdeaToPlanning(idea: ContentIdea) {
@@ -152,6 +154,7 @@ export function ContentIdeasWorkspace() {
     };
     setCalendarEvents((current) => [calendarEvent, ...current]);
     updateStatus(idea.id, "planned", "Événement ajouté et sauvegardé dans le planning.");
+    setSelectedId(null);
   }
 
   return (

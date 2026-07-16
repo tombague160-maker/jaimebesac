@@ -3,10 +3,20 @@ import Parser from "rss-parser";
 import { categorizeNewsItem } from "@/lib/news/categorize-news-item";
 import { scoreNewsItem, urgencyFromScore } from "@/lib/news/score-news-item";
 import { suggestEditorialAngle } from "@/lib/news/suggest-editorial-angle";
+import { assertPublicHttpUrl } from "@/lib/net-guard";
 import { readWorkspaceValue, writeWorkspaceValue } from "@/lib/workspace-store";
 import type { NewsCategory, NewsItem, Priority } from "@/types";
 
 const parser = new Parser();
+
+// Hard cap on sources processed per sync run (defense against a flood of sources
+// added via the API turning one sync into a long-running / DoS operation).
+const MAX_SOURCES_PER_SYNC = 50;
+
+function fetchTimeoutMs() {
+  const parsed = Number(process.env.NEWS_FETCH_TIMEOUT_MS);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 8000;
+}
 
 type SyncOptions = {
   limitPerSource?: number;
@@ -28,25 +38,38 @@ function parsePublishedAt(value?: string) {
 }
 
 async function fetchRssFeed(url: string) {
-  const response = await fetch(url, {
-    headers: {
-      "User-Agent": process.env.NEWS_SYNC_USER_AGENT ?? "JaimeBesacStudio/1.0",
-      Accept: "application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8",
-    },
-  });
+  // Block SSRF (internal/loopback/metadata targets) before making the request.
+  await assertPublicHttpUrl(url);
 
-  if (!response.ok) {
-    throw new Error(`Flux indisponible (${response.status})`);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), fetchTimeoutMs());
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": process.env.NEWS_SYNC_USER_AGENT ?? "JaimeBesacStudio/1.0",
+        Accept: "application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8",
+      },
+      // Do not follow redirects: a 3xx to an internal host would bypass the guard.
+      redirect: "error",
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Flux indisponible (${response.status})`);
+    }
+
+    return parser.parseString(await response.text());
+  } finally {
+    clearTimeout(timer);
   }
-
-  return parser.parseString(await response.text());
 }
 
 export async function syncNewsSources({ limitPerSource = 20 }: SyncOptions = {}) {
   const startedAt = Date.now();
   const sources = (await readWorkspaceValue("newsSources"))
     .filter((source) => source.isActive)
-    .sort((a, b) => b.reliabilityScore - a.reliabilityScore || a.name.localeCompare(b.name));
+    .sort((a, b) => b.reliabilityScore - a.reliabilityScore || a.name.localeCompare(b.name))
+    .slice(0, MAX_SOURCES_PER_SYNC);
   const items = await readWorkspaceValue("newsItems");
   const knownUrls = new Set(items.map((item) => item.originalUrl).filter(Boolean));
   const importedItems: NewsItem[] = [];

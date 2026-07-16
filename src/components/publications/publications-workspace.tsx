@@ -27,7 +27,6 @@ const publicationStatuses: PublicationStatus[] = [
 ];
 
 const platforms = Object.keys(platformConfig) as PublicationPlatform[];
-const weekDays = weekDaysIso();
 type ViewMode = "calendar" | "kanban" | "list";
 
 export function PublicationsWorkspace() {
@@ -42,6 +41,7 @@ export function PublicationsWorkspace() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [notice, setNotice] = useState("Calendrier éditorial prêt pour la semaine en cours.");
+  const weekDays = weekDaysIso();
 
   const filteredPublications = useMemo(() => {
     const lowered = query.toLowerCase();
@@ -117,7 +117,7 @@ export function PublicationsWorkspace() {
       </Card>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="Cette semaine" value={String(filteredPublications.filter((item) => weekDays.includes(item.date)).length)} />
+        <Metric label="Cette semaine" value={String(publications.filter((item) => weekDays.includes(item.date)).length)} />
         <Metric label="En validation" value={String(publications.filter((item) => item.status === "waiting_client_validation").length)} />
         <Metric label="Programmées" value={String(publications.filter((item) => item.status === "scheduled").length)} />
         <Metric label="Publiées" value={String(publications.filter((item) => item.status === "published").length)} />
@@ -205,9 +205,9 @@ export function PublicationsWorkspace() {
       ) : null}
 
       {view === "kanban" ? (
-        <section className="premium-scrollbar grid gap-3 overflow-x-auto pb-2 xl:grid-cols-5">
-          {publicationStatuses.slice(0, 5).map((status) => (
-            <Card key={status} className="min-w-[260px]">
+        <section className="premium-scrollbar flex gap-3 overflow-x-auto pb-2">
+          {publicationStatuses.map((status) => (
+            <Card key={status} className="w-[260px] shrink-0">
               <CardHeader>
                 <div className="flex items-center justify-between gap-2">
                   <Badge config={publicationStatusConfig[status]} />
@@ -251,8 +251,16 @@ export function PublicationsWorkspace() {
                 {filteredPublications.map((publication) => (
                   <tr
                     key={publication.id}
-                    className="cursor-pointer hover:bg-[#F4FBFD]"
+                    role="button"
+                    tabIndex={0}
+                    className="cursor-pointer hover:bg-[#F4FBFD] focus:bg-[#F4FBFD] focus:outline-none"
                     onClick={() => setSelectedId(publication.id)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setSelectedId(publication.id);
+                      }
+                    }}
                   >
                     <td className="px-4 py-3 font-black text-[#18232B]">{publication.title}</td>
                     <td className="px-4 py-3 text-[#596A76]">{getClientName(publication.clientId, clients)}</td>
@@ -284,6 +292,11 @@ export function PublicationsWorkspace() {
           <PublicationDetail
             publication={selectedPublication}
             clientName={getClientName(selectedPublication.clientId, clients)}
+            shootingTitle={
+              selectedPublication.shootingId
+                ? shootings.find((item) => item.id === selectedPublication.shootingId)?.title ?? "Tournage introuvable"
+                : "Aucun"
+            }
             onStatus={(status, message) => updateStatus(selectedPublication.id, status, message)}
           />
         ) : null}
@@ -440,10 +453,12 @@ function PublicationMiniCard({
 function PublicationDetail({
   publication,
   clientName,
+  shootingTitle,
   onStatus,
 }: {
   publication: Publication;
   clientName: string;
+  shootingTitle: string;
   onStatus: (status: PublicationStatus, message: string) => void;
 }) {
   return (
@@ -456,7 +471,7 @@ function PublicationDetail({
         </span>
       </div>
       <Info label="Client" value={clientName} />
-      <Info label="Tournage associé" value={publication.shootingId ?? "Aucun"} />
+      <Info label="Tournage associé" value={shootingTitle} />
       <Info label="Date de publication" value={`${formatDate(publication.date)} · ${publication.time}`} />
       <Info label="Texte de publication" value={publication.caption || "À rédiger"} />
       <Info label="Hashtags" value={publication.hashtags.join(" ")} />

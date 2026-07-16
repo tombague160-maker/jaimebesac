@@ -156,9 +156,11 @@ export function PlanningWorkspace() {
                 setSelectedDate(date);
                 setModalOpen(true);
               }}
-              onEventDrop={(eventId, date) => {
-                setEvents((current) => current.map((event) => (event.id === eventId ? { ...event, date } : event)));
-                setNotice(`Date modifiée : ${formatDate(date)}.`);
+              onEventChange={(eventId, patch) => {
+                setEvents((current) =>
+                  current.map((event) => (event.id === eventId ? { ...event, ...patch } : event)),
+                );
+                setNotice(`Créneau mis à jour : ${formatDate(patch.date)} · ${formatTimeRange(patch.startTime, patch.endTime)}.`);
               }}
             />
           </CardContent>

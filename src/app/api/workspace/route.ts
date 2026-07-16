@@ -1,12 +1,21 @@
 import { NextResponse } from "next/server";
-import { clearWorkspace, readWorkspace } from "@/lib/workspace-store";
+import { isAuthenticatedRequest } from "@/lib/auth";
+import { clearWorkspace, readWorkspaceWithVersions } from "@/lib/workspace-store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function guard(request: Request) {
+  return (await isAuthenticatedRequest(request))
+    ? null
+    : NextResponse.json({ error: "Non authentifié." }, { status: 401 });
+}
+
+export async function GET(request: Request) {
+  const denied = await guard(request);
+  if (denied) return denied;
   try {
-    return NextResponse.json(await readWorkspace());
+    return NextResponse.json(await readWorkspaceWithVersions());
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Erreur de lecture des donnees." },
@@ -15,7 +24,9 @@ export async function GET() {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(request: Request) {
+  const denied = await guard(request);
+  if (denied) return denied;
   try {
     return NextResponse.json(await clearWorkspace());
   } catch (error) {

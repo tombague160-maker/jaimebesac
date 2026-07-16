@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
-import { isWorkspaceKey, readWorkspaceValue, writeWorkspaceValue } from "@/lib/workspace-store";
+import { isAuthenticatedRequest } from "@/lib/auth";
+import { validateWorkspaceValue } from "@/lib/workspace-schemas";
+import {
+  isWorkspaceKey,
+  readWorkspaceValue,
+  workspaceVersion,
+  writeWorkspaceValueChecked,
+} from "@/lib/workspace-store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -8,18 +15,33 @@ type RouteContext = {
   params: Promise<{ key: string }>;
 };
 
-export async function GET(_request: Request, context: RouteContext) {
+async function guard(request: Request) {
+  return (await isAuthenticatedRequest(request))
+    ? null
+    : NextResponse.json({ error: "Non authentifié." }, { status: 401 });
+}
+
+export async function GET(request: Request, context: RouteContext) {
+  const denied = await guard(request);
+  if (denied) return denied;
+
   const { key } = await context.params;
   if (!isWorkspaceKey(key)) return NextResponse.json({ error: "Module inconnu." }, { status: 404 });
 
-  return NextResponse.json({ value: await readWorkspaceValue(key) });
+  const value = await readWorkspaceValue(key);
+  return NextResponse.json({ value, version: workspaceVersion(value) });
 }
 
 export async function PUT(request: Request, context: RouteContext) {
+  const denied = await guard(request);
+  if (denied) return denied;
+
   const { key } = await context.params;
   if (!isWorkspaceKey(key)) return NextResponse.json({ error: "Module inconnu." }, { status: 404 });
 
-  const body = (await request.json().catch(() => null)) as { value?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as
+    | { value?: unknown; version?: unknown }
+    | null;
   if (!body || !("value" in body)) {
     return NextResponse.json({ error: "Donnees manquantes." }, { status: 400 });
   }
@@ -29,6 +51,20 @@ export async function PUT(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Volume de donnees trop important." }, { status: 413 });
   }
 
-  await writeWorkspaceValue(key, body.value as never);
-  return NextResponse.json({ ok: true });
+  const validation = validateWorkspaceValue(key, body.value);
+  if (!validation.ok) {
+    return NextResponse.json({ error: validation.message }, { status: 400 });
+  }
+
+  const expectedVersion = typeof body.version === "string" ? body.version : undefined;
+  const result = await writeWorkspaceValueChecked(key, validation.value as never, expectedVersion);
+
+  if (!result.ok) {
+    return NextResponse.json(
+      { error: "Conflit de version : ces donnees ont ete modifiees ailleurs.", currentVersion: result.currentVersion },
+      { status: 409 },
+    );
+  }
+
+  return NextResponse.json({ ok: true, version: result.version });
 }
