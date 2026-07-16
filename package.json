@@ -6,21 +6,44 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "news:sync": "tsx scripts/sync-news.ts"
   },
   "dependencies": {
-    "next": "16.2.7",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/list": "^6.1.20",
+    "@fullcalendar/react": "^6.1.20",
+    "@fullcalendar/timegrid": "^6.1.20",
+    "@upstash/redis": "^1.38.0",
+    "better-sqlite3": "^12.10.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
+    "framer-motion": "^12.40.0",
+    "lucide-react": "^1.17.0",
+    "next": "16.2.10",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "recharts": "^3.8.1",
+    "rss-parser": "^3.13.0",
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.7",
+    "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.10"
+    }
   }
 }

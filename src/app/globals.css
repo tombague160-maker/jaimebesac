@@ -1,8 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fffdf3;
+  --foreground: #18232b;
+  --brand-ink: #18232b;
+  --brand-ink-soft: #24313a;
+  --brand-blue: #5eadd3;
+  --brand-blue-strong: #469ac4;
+  --brand-blue-soft: #9fd8f3;
+  --brand-blue-wash: #e7f5fa;
+  --brand-paper: #fffdf3;
+  --brand-paper-deep: #fbfaf2;
+  --muted: #596a76;
+  --line: #d8e5ec;
+  --line-soft: #e8f0f4;
+  --surface: #fbfaf2;
+  --pastel-orange: #ffd9b3;
+  --pastel-orange-soft: #fff3e7;
+  --pastel-rose: #f8c7d8;
+  --pastel-rose-soft: #fdedf3;
+  --pastel-green: #bfe7cf;
+  --pastel-green-soft: #eaf8f0;
+  --pastel-yellow: #f7e8a8;
+  --pastel-yellow-soft: #fff8da;
+  --success: #bfe7cf;
+  --warning: #f7e8a8;
+  --danger: #f8c7d8;
 }
 
 @theme inline {
@@ -12,15 +35,187 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(94, 173, 211, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(94, 173, 211, 0.035) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(255, 217, 179, 0.16) 0%, transparent 34%),
+    linear-gradient(225deg, rgba(248, 199, 216, 0.13) 0%, transparent 32%),
+    linear-gradient(160deg, transparent 48%, rgba(191, 231, 207, 0.12) 100%),
+    linear-gradient(180deg, #fffdf3 0%, #f6fbfd 55%, #ffffff 100%);
+  background-size: 28px 28px, 28px 28px, auto, auto, auto;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+svg {
+  flex-shrink: 0;
+}
+
+.app-content :is(h1, h2, h3, h4, p, a, button, label, td, th) {
+  overflow-wrap: anywhere;
+}
+
+.app-content :is(.grid, .flex) > * {
+  min-width: 0;
+}
+
+.app-content table {
+  max-width: 100%;
+}
+
+::selection {
+  background: rgba(94, 173, 211, 0.24);
+}
+
+.premium-card {
+  border: 1px solid rgba(216, 229, 236, 0.95);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
+    var(--brand-paper);
+  box-shadow: 0 14px 38px rgba(24, 35, 43, 0.055);
+}
+
+.soft-panel {
+  border: 1px solid rgba(216, 229, 236, 0.9);
+  border-radius: 8px;
+  background: rgba(251, 250, 242, 0.72);
+}
+
+.focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(94, 173, 211, 0.22);
+}
+
+.premium-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #b8cad4 transparent;
+}
+
+.premium-scrollbar::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.premium-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.premium-scrollbar::-webkit-scrollbar-thumb {
+  background: #b8cad4;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.premium-calendar {
+  --fc-border-color: #d8e5ec;
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: #fbfaf2;
+  --fc-today-bg-color: rgba(159, 216, 243, 0.22);
+  --fc-event-border-color: transparent;
+  --fc-event-text-color: #18232B;
+  --fc-small-font-size: 0.78rem;
+  color: #18232B;
+}
+
+.premium-calendar .fc {
+  font-family: inherit;
+}
+
+.premium-calendar .fc-toolbar-title {
+  font-size: 1.05rem;
+  font-weight: 750;
+}
+
+.premium-calendar .fc-button {
+  border: 1px solid #d8e5ec !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: #18232B !important;
+  box-shadow: none !important;
+  font-weight: 650 !important;
+  padding: 0.45rem 0.7rem !important;
+}
+
+.premium-calendar .fc-button:hover,
+.premium-calendar .fc-button-active {
+  background: #e7f5fa !important;
+  border-color: #9fd8f3 !important;
+}
+
+.premium-calendar .fc-scrollgrid,
+.premium-calendar .fc-theme-standard td,
+.premium-calendar .fc-theme-standard th {
+  border-color: #d8e5ec;
+}
+
+.premium-calendar .fc-col-header-cell {
+  background: #fbfaf2;
+  font-size: 0.76rem;
+  font-weight: 720;
+  padding: 0.55rem 0;
+  text-transform: uppercase;
+}
+
+.premium-calendar .fc-daygrid-day-number {
+  color: #596a76;
+  font-size: 0.78rem;
+  padding: 0.5rem;
+}
+
+.premium-calendar .fc-event {
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 650;
+  padding: 0.12rem 0.28rem;
+  box-shadow: inset 0 -1px 0 rgba(24, 35, 43, 0.08);
+}
+
+.premium-calendar .fc-event-title,
+.premium-calendar .fc-list-event-title,
+.premium-calendar .fc-list-event-time {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.premium-calendar .fc-toolbar {
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+@media (max-width: 640px) {
+  .premium-calendar .fc-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .premium-calendar .fc-toolbar-chunk {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .premium-calendar .fc-toolbar-title {
+    font-size: 0.95rem;
+    text-align: center;
+  }
 }

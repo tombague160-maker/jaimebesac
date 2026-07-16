@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# J'aime Besac Studio
 
-## Getting Started
+Application metier pour piloter J'aime Besac : CRM, veille locale, planning editorial, tournages, publications, relances, idees de contenus et statistiques.
 
-First, run the development server:
+## Demarrage local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir `http://localhost:3000`. La base locale `dev.db` est creee automatiquement et reste ignoree par Git.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+L'application demarre sans donnees d'exemple. Toutes les creations et tous les changements de statut sont sauvegardes automatiquement.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Memoire de l'application
 
-## Learn More
+- En local : SQLite dans `dev.db`.
+- Sur Vercel : Upstash Redis via `UPSTASH_REDIS_REST_URL` et `UPSTASH_REDIS_REST_TOKEN`.
+- Chaque module possede sa propre cle pour eviter qu'une modification du planning remplace le CRM, ou inversement.
+- Un export JSON complet est disponible dans Parametres.
 
-To learn more about Next.js, take a look at the following resources:
+## Deploiement Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Importer le depot dans Vercel.
+2. Dans Vercel Marketplace, installer Upstash Redis et le connecter au projet.
+3. Verifier que `UPSTASH_REDIS_REST_URL` et `UPSTASH_REDIS_REST_TOKEN` ont ete ajoutes au projet.
+4. Ajouter `WORKSPACE_ID=main`. Utiliser un identifiant different pour isoler plusieurs espaces dans la meme base Redis.
+5. Deployer. Vercel execute automatiquement `npm run build`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Sans les deux variables Upstash, l'API refuse volontairement d'utiliser le disque temporaire de Vercel afin d'eviter une fausse sauvegarde qui disparaitrait apres un redeploiement.
 
-## Deploy on Vercel
+Pour des donnees clients reelles, activer aussi la protection d'acces du projet Vercel avant de rendre l'URL publique.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Actualites
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+La veille ne scrape pas de pages web. Elle utilise :
+
+- les actualites ajoutees manuellement ;
+- les flux RSS actifs ajoutes dans Parametres ;
+- le lien original de chaque source.
+
+La synchronisation RSS classe les articles, calcule un score d'importance, suggere un angle editorial et ignore les doublons par URL.
+
+## Verification
+
+```bash
+npm run lint
+npm run build
+npm run news:sync
+```
+
+`npm run news:sync` utilise la meme memoire que l'application et importe les flux RSS actifs.

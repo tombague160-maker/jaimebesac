@@ -1,0 +1,139 @@
+import { createHash } from "node:crypto";
+import Parser from "rss-parser";
+import { categorizeNewsItem } from "@/lib/news/categorize-news-item";
+import { scoreNewsItem, urgencyFromScore } from "@/lib/news/score-news-item";
+import { suggestEditorialAngle } from "@/lib/news/suggest-editorial-angle";
+import { readWorkspaceValue, writeWorkspaceValue } from "@/lib/workspace-store";
+import type { NewsCategory, NewsItem, Priority } from "@/types";
+
+const parser = new Parser();
+
+type SyncOptions = {
+  limitPerSource?: number;
+};
+
+function stripHtml(value: string) {
+  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function stableFallbackUrl(sourceUrl: string, title: string) {
+  const hash = createHash("sha1").update(`${sourceUrl}:${title}`).digest("hex").slice(0, 12);
+  return `${sourceUrl.replace(/\/$/, "")}#${hash}`;
+}
+
+function parsePublishedAt(value?: string) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+async function fetchRssFeed(url: string) {
+  const response = await fetch(url, {
+    headers: {
+      "User-Agent": process.env.NEWS_SYNC_USER_AGENT ?? "JaimeBesacStudio/1.0",
+      Accept: "application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Flux indisponible (${response.status})`);
+  }
+
+  return parser.parseString(await response.text());
+}
+
+export async function syncNewsSources({ limitPerSource = 20 }: SyncOptions = {}) {
+  const startedAt = Date.now();
+  const sources = (await readWorkspaceValue("newsSources"))
+    .filter((source) => source.isActive)
+    .sort((a, b) => b.reliabilityScore - a.reliabilityScore || a.name.localeCompare(b.name));
+  const items = await readWorkspaceValue("newsItems");
+  const knownUrls = new Set(items.map((item) => item.originalUrl).filter(Boolean));
+  const importedItems: NewsItem[] = [];
+
+  const totals = {
+    sources: sources.length,
+    fetchedCount: 0,
+    addedCount: 0,
+    duplicateCount: 0,
+    skippedCount: 0,
+    errorCount: 0,
+    durationMs: 0,
+  };
+
+  for (const source of sources) {
+    if (!source.rssUrl) {
+      totals.skippedCount += 1;
+      continue;
+    }
+
+    try {
+      const feed = await fetchRssFeed(source.rssUrl);
+      let fetchedCount = 0;
+      let addedCount = 0;
+      let duplicateCount = 0;
+
+      for (const entry of feed.items.slice(0, limitPerSource)) {
+        const title = String(entry.title ?? "").trim();
+        if (!title) continue;
+
+        fetchedCount += 1;
+
+        const originalUrl = String(entry.link || entry.guid || stableFallbackUrl(source.url, title));
+        if (knownUrls.has(originalUrl)) {
+          duplicateCount += 1;
+          continue;
+        }
+
+        const publishedAt = parsePublishedAt(entry.isoDate || entry.pubDate);
+        const summary = stripHtml(entry.contentSnippet || entry.content || "");
+        const categories = Array.isArray(entry.categories) ? entry.categories.map(String) : [];
+        const category = categorizeNewsItem(title, summary, categories);
+        const importanceScore = scoreNewsItem({
+          title,
+          summary,
+          sourceReliability: source.reliabilityScore,
+          publishedAt,
+        });
+
+        importedItems.push({
+          id: `news-rss-${createHash("sha1").update(originalUrl).digest("hex").slice(0, 16)}`,
+          sourceId: source.id,
+          sourceName: source.name,
+          sourceUrl: source.url,
+          title,
+          summary: summary.slice(0, 900),
+          originalUrl,
+          publishedAt: publishedAt?.toISOString().slice(0, 10) ?? "",
+          category: category as NewsCategory,
+          tags: [...new Set([...categories, source.category])].slice(0, 8),
+          importanceScore,
+          urgencyLevel: urgencyFromScore(importanceScore) as Priority,
+          editorialAngle: suggestEditorialAngle(category, title),
+          status: importanceScore >= 75 ? "interesting" : "to_read",
+          notes: "",
+          contentIdeas: [],
+          relatedPublicationIds: [],
+          relatedCalendarEventIds: [],
+        });
+        knownUrls.add(originalUrl);
+
+        addedCount += 1;
+      }
+
+      totals.fetchedCount += fetchedCount;
+      totals.addedCount += addedCount;
+      totals.duplicateCount += duplicateCount;
+    } catch (error) {
+      void error;
+      totals.errorCount += 1;
+    }
+  }
+
+  if (importedItems.length) {
+    await writeWorkspaceValue("newsItems", [...importedItems, ...items]);
+  }
+
+  totals.durationMs = Date.now() - startedAt;
+  return totals;
+}
