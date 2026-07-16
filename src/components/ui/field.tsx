@@ -40,9 +40,11 @@ export function TextArea({
 export function Label({
   className,
   children,
-}: {
-  className?: string;
-  children: React.ReactNode;
-}) {
-  return <label className={cn("text-xs font-bold text-[#596A76]", className)}>{children}</label>;
+  ...props
+}: React.LabelHTMLAttributes<HTMLLabelElement>) {
+  return (
+    <label className={cn("text-xs font-bold text-[#596A76]", className)} {...props}>
+      {children}
+    </label>
+  );
 }
