@@ -18,7 +18,10 @@ if (!password) {
 const salt = randomBytes(16);
 const derived = scryptSync(password, salt, KEYLEN, { N, r: R, p: P });
 const hash = `scrypt$${N}$${R}$${P}$${salt.toString("hex")}$${derived.toString("hex")}`;
+const dockerHash = hash.replace(/\$/g, "$$$$"); // chaque $ doublé pour docker-compose
 
-console.log("\nAjoute cette ligne dans ton fichier .env :\n");
+console.log("\n--- Fichier .env (un seul $) ---\n");
 console.log(`AUTH_PASSWORD_HASH='${hash}'`);
+console.log("\n--- docker-compose (environment:, $ DOUBLÉS) ---\n");
+console.log(`      - AUTH_PASSWORD_HASH=${dockerHash}`);
 console.log("");
