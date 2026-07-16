@@ -30,6 +30,8 @@ services:
       - AUTH_PASSWORD_HASH=colle-ici-le-hash-avec-les-dollars-doubles
       - SESSION_SECRET=colle-ici-un-secret-de-64-caracteres
       - SESSION_TTL_SECONDS=2592000
+      # Décommente pour tester en LAN http:// (avant nginx). À enlever derrière HTTPS.
+      # - COOKIE_SECURE=false
       # --- Cron de synchronisation RSS (optionnel) ---
       - CRON_SECRET=colle-ici-un-autre-secret
       # --- Base SQLite (dans le volume) ---

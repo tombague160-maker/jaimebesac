@@ -116,3 +116,14 @@ export function sessionTtlSeconds(): number {
   const parsed = Number(process.env.SESSION_TTL_SECONDS);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 60 * 60 * 24 * 30;
 }
+
+/**
+ * Whether the session cookie is marked `Secure`. Default: true in production.
+ * Set COOKIE_SECURE=false for a plain-HTTP LAN deployment (a browser refuses a
+ * Secure cookie over http://, which would break login). Use HTTPS in production.
+ */
+export function cookieSecure(): boolean {
+  if (process.env.COOKIE_SECURE === "false") return false;
+  if (process.env.COOKIE_SECURE === "true") return true;
+  return process.env.NODE_ENV === "production";
+}

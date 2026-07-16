@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, createSessionToken, safeEqual, sessionTtlSeconds } from "@/lib/auth";
+import { SESSION_COOKIE, cookieSecure, createSessionToken, safeEqual, sessionTtlSeconds } from "@/lib/auth";
 import { verifyPassword } from "@/lib/auth-password";
 
 export const runtime = "nodejs";
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
   const response = NextResponse.json({ ok: true });
   response.cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: cookieSecure(),
     sameSite: "lax",
     path: "/",
     maxAge: ttl,
