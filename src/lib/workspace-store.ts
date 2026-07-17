@@ -62,7 +62,19 @@ function sqliteClient() {
       /* the directory may already exist or be a mount root */
     }
     const sqlite = new Database(dbPath);
-    sqlite.pragma("journal_mode = WAL");
+    // WAL is fastest but needs shared-memory + POSIX locks, which fail on some
+    // network/pool filesystems (mergerfs / NFS / SMB, common on NAS) → "disk I/O
+    // error". Set SQLITE_JOURNAL_MODE=DELETE there. Default WAL for a local disk.
+    const journalMode = process.env.SQLITE_JOURNAL_MODE || "WAL";
+    try {
+      sqlite.pragma(`journal_mode = ${journalMode}`);
+    } catch {
+      try {
+        sqlite.pragma("journal_mode = DELETE");
+      } catch {
+        /* keep SQLite's default journal mode */
+      }
+    }
     sqlite.exec(`
       CREATE TABLE IF NOT EXISTS workspace_state (
         key TEXT PRIMARY KEY,
