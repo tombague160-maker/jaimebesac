@@ -109,7 +109,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   }, [pathname, reload]);
 
   const persist = useCallback(
-    <K extends WorkspaceKey>(key: K, value: WorkspaceData[K]) => {
+    <K extends WorkspaceKey>(key: K, value: WorkspaceData[K], revertTo: WorkspaceData[K]) => {
       pendingWrites.current += 1;
       setSaveStatus("saving");
 
@@ -126,9 +126,11 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
           if (response.status === 409) {
             // Someone else changed this key: reload authoritative state and inform.
             await reload();
-            throw new Error(
+            const conflict = new Error(
               "Ces donnees ont ete modifiees dans un autre onglet. La derniere version a ete rechargee.",
             );
+            (conflict as { conflict?: boolean }).conflict = true;
+            throw conflict;
           }
           if (!response.ok) throw new Error("La sauvegarde a echoue.");
 
@@ -142,6 +144,17 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         .catch((saveError) => {
           pendingWrites.current -= 1;
           failedWrites.current += 1;
+          // On a non-conflict failure the server never accepted the write: revert
+          // the optimistic value so the UI shows the real (unsaved) state instead
+          // of pretending it was saved. (A 409 already resynced via reload().)
+          const isConflict =
+            typeof saveError === "object" && saveError !== null &&
+            (saveError as { conflict?: boolean }).conflict === true;
+          if (!isConflict && dataRef.current[key] === value) {
+            const reverted = { ...dataRef.current, [key]: revertTo };
+            dataRef.current = reverted;
+            setData(reverted);
+          }
           setError(saveError instanceof Error ? saveError.message : "Erreur de sauvegarde.");
           setSaveStatus("error");
         });
@@ -166,7 +179,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
       dataRef.current = nextData;
       setData(nextData);
-      persist(key, nextValue);
+      persist(key, nextValue, previousValue);
     },
     [persist],
   );

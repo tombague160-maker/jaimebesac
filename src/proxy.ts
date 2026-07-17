@@ -38,8 +38,10 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Everything except Next internals and static asset files (which must load
-    // without auth so the login page can render).
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|json|webmanifest)$).*)",
+    // Everything except Next internals and TOP-LEVEL static asset files. The
+    // `[^/]+\.ext$` (no slash before the filename) keeps the exclusion to root
+    // files only, so a future API route like `/api/export/report.json` stays
+    // authenticated instead of being served publicly.
+    "/((?!_next/static|_next/image|favicon\\.ico|[^/]+\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|json|webmanifest)$).*)",
   ],
 };
