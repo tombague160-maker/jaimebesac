@@ -4,7 +4,12 @@ import { categorizeNewsItem } from "@/lib/news/categorize-news-item";
 import { scoreNewsItem, urgencyFromScore } from "@/lib/news/score-news-item";
 import { suggestEditorialAngle } from "@/lib/news/suggest-editorial-angle";
 import { assertPublicHttpUrl } from "@/lib/net-guard";
-import { readWorkspaceValue, writeWorkspaceValue } from "@/lib/workspace-store";
+import {
+  readWorkspaceValue,
+  workspaceVersion,
+  writeWorkspaceValueChecked,
+} from "@/lib/workspace-store";
+import { toDateOnly } from "@/lib/dates";
 import type { NewsCategory, NewsItem, Priority } from "@/types";
 
 const parser = new Parser();
@@ -12,6 +17,36 @@ const parser = new Parser();
 // Hard cap on sources processed per sync run (defense against a flood of sources
 // added via the API turning one sync into a long-running / DoS operation).
 const MAX_SOURCES_PER_SYNC = 50;
+
+// Hard cap on total stored news items (prevents unbounded growth that would
+// eventually make the module exceed the 2 MB write limit → 413 on UI saves).
+function maxNewsItems() {
+  const parsed = Number(process.env.NEWS_MAX_ITEMS);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1000;
+}
+
+/**
+ * Merge freshly imported items into the current stored list with optimistic
+ * concurrency: re-read, dedupe by originalUrl, prepend, cap, compare-and-set.
+ * Retries on conflict so a concurrent UI edit of `newsItems` is never clobbered.
+ */
+async function mergeImportedNewsItems(imported: NewsItem[]) {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const current = await readWorkspaceValue("newsItems");
+    const known = new Set(current.map((item) => item.originalUrl).filter(Boolean));
+    const fresh = imported.filter((item) => !known.has(item.originalUrl));
+    if (fresh.length === 0) return;
+
+    const merged = [...fresh, ...current].slice(0, maxNewsItems());
+    const result = await writeWorkspaceValueChecked(
+      "newsItems",
+      merged,
+      workspaceVersion(current),
+    );
+    if (result.ok) return;
+    // Conflict: someone changed newsItems in the meantime → re-read and retry.
+  }
+}
 
 function fetchTimeoutMs() {
   const parsed = Number(process.env.NEWS_FETCH_TIMEOUT_MS);
@@ -127,7 +162,7 @@ export async function syncNewsSources({ limitPerSource = 20 }: SyncOptions = {})
           title,
           summary: summary.slice(0, 900),
           originalUrl,
-          publishedAt: publishedAt?.toISOString().slice(0, 10) ?? "",
+          publishedAt: toDateOnly(publishedAt),
           category: category as NewsCategory,
           tags: [...new Set([...categories, source.category])].slice(0, 8),
           importanceScore,
@@ -154,7 +189,7 @@ export async function syncNewsSources({ limitPerSource = 20 }: SyncOptions = {})
   }
 
   if (importedItems.length) {
-    await writeWorkspaceValue("newsItems", [...importedItems, ...items]);
+    await mergeImportedNewsItems(importedItems);
   }
 
   totals.durationMs = Date.now() - startedAt;

@@ -9,8 +9,17 @@ import { Label, TextInput } from "@/components/ui/field";
 function safeRedirectTarget(): string {
   if (typeof window === "undefined") return "/dashboard";
   const from = new URLSearchParams(window.location.search).get("from");
-  // Only allow same-site absolute paths to avoid open-redirect.
-  if (from && from.startsWith("/") && !from.startsWith("//")) return from;
+  if (!from) return "/dashboard";
+  // Resolve against our origin and only accept a same-origin target — this
+  // rejects "//evil.com", "/\evil.com" (browsers treat \ as /) and absolute URLs.
+  try {
+    const target = new URL(from, window.location.origin);
+    if (target.origin === window.location.origin) {
+      return `${target.pathname}${target.search}${target.hash}`;
+    }
+  } catch {
+    // fall through
+  }
   return "/dashboard";
 }
 

@@ -56,8 +56,14 @@ export async function PUT(request: Request, context: RouteContext) {
     return NextResponse.json({ error: validation.message }, { status: 400 });
   }
 
-  const expectedVersion = typeof body.version === "string" ? body.version : undefined;
-  const result = await writeWorkspaceValueChecked(key, validation.value as never, expectedVersion);
+  // A version token is mandatory: it is always available client-side (the initial
+  // GET returns one per key, even for empty modules). Requiring it makes the
+  // optimistic-concurrency check non-optional — no blind overwrite by omission.
+  if (typeof body.version !== "string") {
+    return NextResponse.json({ error: "Version manquante (concurrence)." }, { status: 428 });
+  }
+
+  const result = await writeWorkspaceValueChecked(key, validation.value as never, body.version);
 
   if (!result.ok) {
     return NextResponse.json(

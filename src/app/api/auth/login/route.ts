@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { SESSION_COOKIE, cookieSecure, createSessionToken, safeEqual, sessionTtlSeconds } from "@/lib/auth";
 import { verifyPassword } from "@/lib/auth-password";
+import { clientKey, loginBlockedFor, recordLoginFailure, recordLoginSuccess } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,6 +18,16 @@ export async function POST(request: Request) {
     );
   }
 
+  // Throttle brute force before doing any work.
+  const throttleKey = clientKey(request);
+  const blockedMs = loginBlockedFor(throttleKey);
+  if (blockedMs > 0) {
+    return NextResponse.json(
+      { error: "Trop de tentatives. Réessaie plus tard." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil(blockedMs / 1000)) } },
+    );
+  }
+
   const body = (await request.json().catch(() => null)) as
     | { email?: unknown; password?: unknown }
     | null;
@@ -28,8 +39,11 @@ export async function POST(request: Request) {
   const emailOk = safeEqual(body.email.trim().toLowerCase(), email.trim().toLowerCase());
   const passwordOk = verifyPassword(body.password, passwordHash);
   if (!emailOk || !passwordOk) {
+    recordLoginFailure(throttleKey);
     return NextResponse.json({ error: "Email ou mot de passe incorrect." }, { status: 401 });
   }
+
+  recordLoginSuccess(throttleKey);
 
   const ttl = sessionTtlSeconds();
   const token = await createSessionToken(secret, ttl);

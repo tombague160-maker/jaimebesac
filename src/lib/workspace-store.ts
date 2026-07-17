@@ -146,6 +146,11 @@ export async function writeWorkspaceValueChecked<K extends WorkspaceKey>(
 ): Promise<WriteResult> {
   const redis = redisClient();
   if (redis) {
+    // NOTE: this get-then-set is best-effort, NOT atomic — two concurrent writers
+    // can both pass the version check and the last one wins (no WATCH/Lua over the
+    // Upstash REST API for a content-hash comparison). The self-host deployment
+    // uses SQLite (below), whose compare-and-set runs inside a synchronous
+    // transaction and IS atomic. Prefer SQLite when strict concurrency matters.
     const current = (await redis.get<WorkspaceData[K]>(storageKey(key))) ?? defaultFor(key);
     const currentVersion = workspaceVersion(current);
     if (expectedVersion != null && expectedVersion !== currentVersion) {
