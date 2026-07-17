@@ -15,6 +15,8 @@ import { addDaysIso, todayIso } from "@/lib/dates";
 import { isOverdue } from "@/lib/reminders";
 import { formatDate, getClientName } from "@/lib/utils";
 import type { Priority, Reminder, ReminderChannel, ReminderStatus, ReminderType } from "@/types";
+import { Metric } from "@/components/ui/metric";
+import { InfoRow } from "@/components/ui/info-row";
 
 const reminderTypes = Object.keys(reminderTypeLabels) as ReminderType[];
 const channels = Object.keys(channelLabels) as ReminderChannel[];
@@ -127,10 +129,10 @@ export function RemindersWorkspace() {
       </Card>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="En retard" value={String(grouped.overdue.length)} />
-        <Metric label="Aujourd'hui" value={String(grouped.today.length)} />
-        <Metric label="À venir" value={String(grouped.upcoming.length)} />
-        <Metric label="Terminées" value={String(grouped.done.length)} />
+        <Metric icon={Bell} label="En retard" value={String(grouped.overdue.length)} />
+        <Metric icon={Bell} label="Aujourd'hui" value={String(grouped.today.length)} />
+        <Metric icon={Bell} label="À venir" value={String(grouped.upcoming.length)} />
+        <Metric icon={Bell} label="Terminées" value={String(grouped.done.length)} />
       </section>
 
       <Card>
@@ -243,19 +245,6 @@ export function RemindersWorkspace() {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold text-[#596A76]">{label}</p>
-          <p className="mt-2 text-2xl font-black text-[#18232B]">{value}</p>
-        </div>
-        <Bell className="h-5 w-5 text-[#5EADD3]" />
-      </CardContent>
-    </Card>
-  );
-}
 
 function ReminderColumn({
   title,
@@ -339,9 +328,9 @@ function ReminderDetail({
           {channelLabels[reminder.channel]}
         </span>
       </div>
-      <Info label="Client" value={clientName} />
-      <Info label="Date prévue" value={formatDate(reminder.dueDate)} />
-      <Info label="Note" value={reminder.notes || "Aucune note"} />
+      <InfoRow label="Client" value={clientName} />
+      <InfoRow label="Date prévue" value={formatDate(reminder.dueDate)} />
+      <InfoRow label="Note" value={reminder.notes || "Aucune note"} />
       <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
         <p className="text-xs font-black uppercase text-[#596A76]">Historique</p>
         <div className="mt-2 space-y-2">
@@ -370,11 +359,3 @@ function ReminderDetail({
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
-      <p className="text-xs font-black uppercase text-[#596A76]">{label}</p>
-      <p className="mt-1 text-sm font-bold leading-6 text-[#18232B]">{value}</p>
-    </div>
-  );
-}

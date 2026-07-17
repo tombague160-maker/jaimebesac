@@ -13,6 +13,9 @@ import { platformConfig, priorityConfig, shootingStatusConfig } from "@/lib/cons
 import { addDaysIso, todayIso } from "@/lib/dates";
 import { cn, formatDate, formatTimeRange, getClientName } from "@/lib/utils";
 import type { Priority, Publication, PublicationPlatform, Shooting, ShootingStatus } from "@/types";
+import { Metric } from "@/components/ui/metric";
+import { InfoRow } from "@/components/ui/info-row";
+import { ViewToggle } from "@/components/ui/view-toggle";
 
 const shootingStages: ShootingStatus[] = [
   "idea",
@@ -165,10 +168,10 @@ export function ShootingsWorkspace() {
       </Card>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="Confirmés" value={String(shootings.filter((item) => item.status === "confirmed").length)} />
-        <Metric label="En montage" value={String(shootings.filter((item) => item.status === "editing").length)} />
-        <Metric label="À valider" value={String(shootings.filter((item) => item.status === "sent_to_client").length)} />
-        <Metric label="Publiés" value={String(shootings.filter((item) => item.status === "published").length)} />
+        <Metric icon={Clapperboard} label="Confirmés" value={String(shootings.filter((item) => item.status === "confirmed").length)} />
+        <Metric icon={Clapperboard} label="En montage" value={String(shootings.filter((item) => item.status === "editing").length)} />
+        <Metric icon={Clapperboard} label="À valider" value={String(shootings.filter((item) => item.status === "sent_to_client").length)} />
+        <Metric icon={Clapperboard} label="Publiés" value={String(shootings.filter((item) => item.status === "published").length)} />
       </section>
 
       <Card>
@@ -202,8 +205,8 @@ export function ShootingsWorkspace() {
             ))}
           </Select>
           <div className="flex gap-2">
-            <ViewButton active={view === "cards"} onClick={() => setView("cards")} icon={LayoutGrid} label="Cartes" />
-            <ViewButton active={view === "kanban"} onClick={() => setView("kanban")} icon={List} label="Kanban" />
+            <ViewToggle active={view === "cards"} onClick={() => setView("cards")} icon={LayoutGrid} label="Cartes" />
+            <ViewToggle active={view === "kanban"} onClick={() => setView("kanban")} icon={List} label="Kanban" />
           </div>
         </CardContent>
       </Card>
@@ -363,46 +366,7 @@ export function ShootingsWorkspace() {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold text-[#596A76]">{label}</p>
-          <p className="mt-2 text-2xl font-black text-[#18232B]">{value}</p>
-        </div>
-        <Clapperboard className="h-5 w-5 text-[#5EADD3]" />
-      </CardContent>
-    </Card>
-  );
-}
 
-function ViewButton({
-  active,
-  onClick,
-  icon: Icon,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: typeof LayoutGrid;
-  label: string;
-}) {
-  return (
-    <button
-      className={cn(
-        "inline-flex h-10 items-center gap-2 rounded-lg border px-3 text-sm font-bold transition",
-        active
-          ? "border-[#9FD8F3] bg-[#E7F5FA] text-[#18232B]"
-          : "border-[#D8E5EC] bg-white text-[#596A76] hover:text-[#18232B]",
-      )}
-      onClick={onClick}
-    >
-      <Icon className="h-4 w-4" />
-      <span className="hidden sm:inline">{label}</span>
-    </button>
-  );
-}
 
 function ShootingCard({
   shooting,
@@ -474,13 +438,13 @@ function ShootingDetail({
           })}
         </div>
       </div>
-      <Info label="Date et heure" value={`${formatDate(shooting.date)} · ${formatTimeRange(shooting.startTime, shooting.endTime)}`} />
-      <Info label="Lieu" value={shooting.location} />
-      <Info label="Contact sur place" value={`${shooting.contactName} · ${shooting.contactPhone}`} />
-      <Info label="Brief créatif" value={shooting.creativeBrief} />
-      <Info label="Objectif" value={shooting.objective} />
-      <Info label="Matériel" value={shooting.equipment.join(", ")} />
-      <Info label="Notes internes" value={shooting.notes} />
+      <InfoRow label="Date et heure" value={`${formatDate(shooting.date)} · ${formatTimeRange(shooting.startTime, shooting.endTime)}`} />
+      <InfoRow label="Lieu" value={shooting.location} />
+      <InfoRow label="Contact sur place" value={`${shooting.contactName} · ${shooting.contactPhone}`} />
+      <InfoRow label="Brief créatif" value={shooting.creativeBrief} />
+      <InfoRow label="Objectif" value={shooting.objective} />
+      <InfoRow label="Matériel" value={shooting.equipment.join(", ")} />
+      <InfoRow label="Notes internes" value={shooting.notes} />
 
       <div className="grid gap-2">
         <Button onClick={() => onStatus("shot", "Tournage marqué comme tourné.")}>
@@ -508,11 +472,3 @@ function ShootingDetail({
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
-      <p className="text-xs font-black uppercase text-[#596A76]">{label}</p>
-      <p className="mt-1 text-sm font-bold leading-6 text-[#18232B]">{value}</p>
-    </div>
-  );
-}

@@ -26,6 +26,8 @@ import { addDaysIso, todayIso } from "@/lib/dates";
 import { getCalendarEventColor, pastelColors } from "@/lib/theme";
 import { formatDate } from "@/lib/utils";
 import type { CalendarEvent, ContentIdea, NewsCategory, NewsItem, NewsStatus, Priority, Publication } from "@/types";
+import { Metric } from "@/components/ui/metric";
+import { InfoRow } from "@/components/ui/info-row";
 
 export function NewsWorkspace() {
   const [items, setItems] = useWorkspaceValue("newsItems");
@@ -228,10 +230,10 @@ export function NewsWorkspace() {
       </Card>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="A traiter" value={String(items.filter((item) => ["to_process", "interesting"].includes(item.status)).length)} />
-        <Metric label="Score moyen" value={averageScore} />
-        <Metric label="Sources actives" value={String(sources.filter((item) => item.isActive).length)} />
-        <Metric label="Sujets urgents" value={String(items.filter((item) => item.urgencyLevel === "urgent").length)} />
+        <Metric icon={Newspaper} label="A traiter" value={String(items.filter((item) => ["to_process", "interesting"].includes(item.status)).length)} />
+        <Metric icon={Newspaper} label="Score moyen" value={averageScore} />
+        <Metric icon={Newspaper} label="Sources actives" value={String(sources.filter((item) => item.isActive).length)} />
+        <Metric icon={Newspaper} label="Sujets urgents" value={String(items.filter((item) => item.urgencyLevel === "urgent").length)} />
       </section>
 
       <Card>
@@ -424,19 +426,6 @@ export function NewsWorkspace() {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold text-[#596A76]">{label}</p>
-          <p className="mt-2 text-2xl font-black text-[#18232B]">{value}</p>
-        </div>
-        <Newspaper className="h-5 w-5 text-[#5EADD3]" />
-      </CardContent>
-    </Card>
-  );
-}
 
 function NewsCard({
   item,
@@ -511,11 +500,11 @@ function NewsDetail({
           Score {item.importanceScore}
         </span>
       </div>
-      <Info label="Resume" value={item.summary} />
-      <Info label="Angle editorial suggere" value={item.editorialAngle} />
-      <Info label="Tags" value={item.tags.join(", ")} />
-      <Info label="Notes internes" value={item.notes || "Aucune note"} />
-      <Info label="Idees possibles" value={item.contentIdeas.join(" - ") || "A definir"} />
+      <InfoRow label="Resume" value={item.summary} />
+      <InfoRow label="Angle editorial suggere" value={item.editorialAngle} />
+      <InfoRow label="Tags" value={item.tags.join(", ")} />
+      <InfoRow label="Notes internes" value={item.notes || "Aucune note"} />
+      <InfoRow label="Idees possibles" value={item.contentIdeas.join(" - ") || "A definir"} />
       {item.originalUrl && /^https?:\/\//i.test(item.originalUrl) ? (
         <a
           href={item.originalUrl}
@@ -553,14 +542,6 @@ function NewsDetail({
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
-      <p className="text-xs font-black uppercase text-[#596A76]">{label}</p>
-      <p className="mt-1 text-sm font-bold leading-6 text-[#18232B]">{value}</p>
-    </div>
-  );
-}
 
 function formatNewsDate(value: string) {
   return value ? formatDate(value) : "Date inconnue";

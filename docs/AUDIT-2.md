@@ -19,11 +19,11 @@ aucun P0/P1 exploitable par un anonyme.** Corrigé par lots (S → A → D → R
 | S9 | CAS Redis non atomique | `lib/workspace-store.ts` | Documenté (SQLite = atomique ; Redis best-effort). |
 | S10 | Matcher proxy trop large (`.*\.json$` à toute profondeur) | `src/proxy.ts` | Restreint aux fichiers statiques de 1er niveau. |
 
-## Lot A — Architecture *(à venir)*
-- A1 : supprimer les routes REST mortes (`/api/clients`, `/api/news*` sauf `sync`) + `lib/validation.ts` (~289 l., jamais appelées).
-- A2 : factoriser `Info` ×7, `Metric` ×7, `ViewButton` ×3 dans `components/ui/`.
-- A3 : remplacer les casts `form.get() as <Union>` (~15) par des parseurs zod.
-- A4 : sélecteurs pour éviter le re-render global du contexte.
+## Lot A — Architecture *(fait)*
+- A1 ✅ : routes REST mortes supprimées (`/api/clients`, `/api/clients/[id]`, `/api/news`, `/api/news/[id]`, `/api/news/sources`) + `lib/validation.ts` — ~289 lignes jamais appelées.
+- A2 ✅ : `Info` (×7), `Metric` (×7), `ViewButton` (×3) factorisés dans `components/ui/{info-row,metric,view-toggle}.tsx` (foundation aussi pour la tokenisation du Lot D).
+- A3 (reporté/faible) : les casts `form.get() as <Union>` sont alimentés par des `<Select>` aux options fixes → valeurs déjà contraintes en pratique ; la validation par élément est traitée au grain du `PUT` (Lot S) et le sera plus finement au Lot R.
+- A4 (fusionné dans R) : les sélecteurs/re-render ciblés relèvent de la refonte de persistance (Lot R).
 
 ## Lot D — Design & UX *(à venir)*
 - D1 : tokeniser ~385 couleurs hex (21 fichiers) via `@theme` (Tailwind v4).

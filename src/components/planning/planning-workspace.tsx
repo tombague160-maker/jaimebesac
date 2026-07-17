@@ -16,6 +16,7 @@ import { todayIso } from "@/lib/dates";
 import { getCalendarEventColor } from "@/lib/theme";
 import { cn, formatDate, formatTimeRange, getClientName } from "@/lib/utils";
 import type { CalendarEvent, CalendarEventType, Priority } from "@/types";
+import { InfoRow } from "@/components/ui/info-row";
 
 const PlanningCalendar = dynamic(() => import("@/components/planning/planning-calendar"), {
   ssr: false,
@@ -216,12 +217,12 @@ export function PlanningWorkspace() {
               <p className="mt-2 text-sm leading-6 text-[#18232B]">{selectedEvent.description}</p>
             </div>
             <div className="grid gap-3 text-sm">
-              <Info label="Client" value={getClientName(selectedEvent.clientId, clients)} />
-              <Info label="Lieu" value={selectedEvent.location} />
-              <Info label="Contact" value={selectedEvent.contact ?? "À compléter"} />
-              <Info label="Téléphone" value={selectedEvent.phone ?? "À compléter"} />
-              <Info label="Plateformes" value={selectedEvent.platforms?.join(", ") ?? "Non défini"} />
-              <Info label="Notes internes" value={selectedEvent.notes ?? "Aucune note"} />
+              <InfoRow label="Client" value={getClientName(selectedEvent.clientId, clients)} />
+              <InfoRow label="Lieu" value={selectedEvent.location} />
+              <InfoRow label="Contact" value={selectedEvent.contact ?? "À compléter"} />
+              <InfoRow label="Téléphone" value={selectedEvent.phone ?? "À compléter"} />
+              <InfoRow label="Plateformes" value={selectedEvent.platforms?.join(", ") ?? "Non défini"} />
+              <InfoRow label="Notes internes" value={selectedEvent.notes ?? "Aucune note"} />
             </div>
             <div className="grid gap-2">
               <Button onClick={() => markDone(selectedEvent.id)}>
@@ -315,11 +316,3 @@ export function PlanningWorkspace() {
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
-      <p className="text-xs font-black uppercase text-[#596A76]">{label}</p>
-      <p className="mt-1 font-bold text-[#18232B]">{value}</p>
-    </div>
-  );
-}

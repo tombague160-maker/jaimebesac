@@ -26,6 +26,7 @@ import { todayIso } from "@/lib/dates";
 import { countOverdue } from "@/lib/reminders";
 import { brandColors, chartPalette, pastelColors } from "@/lib/theme";
 import { formatCurrency } from "@/lib/utils";
+import { Metric } from "@/components/ui/metric";
 
 const chartTooltipStyle = {
   borderRadius: 8,
@@ -255,27 +256,6 @@ export function StatisticsWorkspace() {
   );
 }
 
-function Metric({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Users;
-  label: string;
-  value: string;
-}) {
-  return (
-    <Card>
-      <CardContent className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold text-[#596A76]">{label}</p>
-          <p className="mt-2 text-2xl font-black text-[#18232B]">{value}</p>
-        </div>
-        <Icon className="h-5 w-5 text-[#5EADD3]" />
-      </CardContent>
-    </Card>
-  );
-}
 
 function ChartPlaceholder() {
   return (

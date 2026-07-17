@@ -12,8 +12,11 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { useWorkspace, useWorkspaceValue } from "@/components/workspace-provider";
 import { clientStatusConfig, priorityConfig } from "@/lib/constants";
 import { addDaysIso, todayIso } from "@/lib/dates";
-import { cn, formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Client, ClientStatus, Priority } from "@/types";
+import { Metric } from "@/components/ui/metric";
+import { InfoRow } from "@/components/ui/info-row";
+import { ViewToggle } from "@/components/ui/view-toggle";
 
 const clientStages: ClientStatus[] = [
   "prospect",
@@ -129,10 +132,10 @@ export function ClientsWorkspace() {
       </Card>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="CA réalisé" value={formatCurrency(clients.reduce((sum, client) => sum + client.actualRevenue, 0))} />
-        <Metric label="CA estimé" value={formatCurrency(clients.reduce((sum, client) => sum + client.estimatedRevenue, 0))} />
-        <Metric label="Clients actifs" value={String(clients.filter((client) => client.status === "active").length)} />
-        <Metric label="À relancer" value={String(clients.filter((client) => client.status === "to_follow_up").length)} />
+        <Metric icon={Building2} label="CA réalisé" value={formatCurrency(clients.reduce((sum, client) => sum + client.actualRevenue, 0))} />
+        <Metric icon={Building2} label="CA estimé" value={formatCurrency(clients.reduce((sum, client) => sum + client.estimatedRevenue, 0))} />
+        <Metric icon={Building2} label="Clients actifs" value={String(clients.filter((client) => client.status === "active").length)} />
+        <Metric icon={Building2} label="À relancer" value={String(clients.filter((client) => client.status === "to_follow_up").length)} />
       </section>
 
       <Card>
@@ -158,9 +161,9 @@ export function ClientsWorkspace() {
             ))}
           </Select>
           <div className="flex gap-2">
-            <ViewButton active={view === "cards"} onClick={() => setView("cards")} icon={LayoutGrid} label="Cartes" />
-            <ViewButton active={view === "pipeline"} onClick={() => setView("pipeline")} icon={List} label="Pipeline" />
-            <ViewButton active={view === "table"} onClick={() => setView("table")} icon={Table2} label="Table" />
+            <ViewToggle active={view === "cards"} onClick={() => setView("cards")} icon={LayoutGrid} label="Cartes" />
+            <ViewToggle active={view === "pipeline"} onClick={() => setView("pipeline")} icon={List} label="Pipeline" />
+            <ViewToggle active={view === "table"} onClick={() => setView("table")} icon={Table2} label="Table" />
           </div>
         </CardContent>
       </Card>
@@ -339,46 +342,7 @@ export function ClientsWorkspace() {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold text-[#596A76]">{label}</p>
-          <p className="mt-2 text-2xl font-black text-[#18232B]">{value}</p>
-        </div>
-        <Building2 className="h-5 w-5 text-[#5EADD3]" />
-      </CardContent>
-    </Card>
-  );
-}
 
-function ViewButton({
-  active,
-  onClick,
-  icon: Icon,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: typeof LayoutGrid;
-  label: string;
-}) {
-  return (
-    <button
-      className={cn(
-        "inline-flex h-10 items-center gap-2 rounded-lg border px-3 text-sm font-bold transition",
-        active
-          ? "border-[#9FD8F3] bg-[#E7F5FA] text-[#18232B]"
-          : "border-[#D8E5EC] bg-white text-[#596A76] hover:text-[#18232B]",
-      )}
-      onClick={onClick}
-    >
-      <Icon className="h-4 w-4" />
-      <span className="hidden sm:inline">{label}</span>
-    </button>
-  );
-}
 
 function ClientCard({ client, onOpen }: { client: Client; onOpen: () => void }) {
   return (
@@ -446,18 +410,18 @@ function ClientDetail({
       </div>
 
       <div className="grid gap-3">
-        <Info label="Contact" value={client.contactName} />
-        <Info label="Téléphone" value={client.phone || "À compléter"} />
-        <Info label="Email" value={client.email || "À compléter"} />
-        <Info label="Adresse" value={`${client.address}, ${client.city}`} />
-        <Info label="Réseaux" value={[client.instagram, client.facebook, client.tiktok, client.linkedin].filter(Boolean).join(" · ") || "À compléter"} />
-        <Info label="Dernier contact" value={formatDate(client.lastContactDate)} />
-        <Info label="Prochaine relance" value={formatDate(client.nextFollowUpDate)} />
+        <InfoRow label="Contact" value={client.contactName} />
+        <InfoRow label="Téléphone" value={client.phone || "À compléter"} />
+        <InfoRow label="Email" value={client.email || "À compléter"} />
+        <InfoRow label="Adresse" value={`${client.address}, ${client.city}`} />
+        <InfoRow label="Réseaux" value={[client.instagram, client.facebook, client.tiktok, client.linkedin].filter(Boolean).join(" · ") || "À compléter"} />
+        <InfoRow label="Dernier contact" value={formatDate(client.lastContactDate)} />
+        <InfoRow label="Prochaine relance" value={formatDate(client.nextFollowUpDate)} />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Info label="CA estimé" value={formatCurrency(client.estimatedRevenue)} />
-        <Info label="CA réalisé" value={formatCurrency(client.actualRevenue)} />
+        <InfoRow label="CA estimé" value={formatCurrency(client.estimatedRevenue)} />
+        <InfoRow label="CA réalisé" value={formatCurrency(client.actualRevenue)} />
       </div>
 
       <div className="space-y-2">
@@ -485,14 +449,6 @@ function ClientDetail({
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
-      <p className="text-xs font-black uppercase text-[#596A76]">{label}</p>
-      <p className="mt-1 break-words text-sm font-bold text-[#18232B]">{value}</p>
-    </div>
-  );
-}
 
 function LinkedList({
   icon: Icon,
