@@ -5,9 +5,9 @@
 #      (ou pousse un tag  git tag v0.1.0 && git push origin v0.1.0 ). Rends ensuite le package
 #      GHCR "public" (Repo → Packages → jaimebesac → Package settings → Change visibility),
 #      sinon fais  docker login ghcr.io  sur l'OMV.
-#   2) Créer le dossier de données et lui donner le bon propriétaire (l'app tourne en uid 1001) :
+#   2) Créer le dossier de données (le conteneur répare tout seul les droits au
+#      démarrage, plus besoin de chown manuel) :
 #        sudo mkdir -p /srv/docker/jaimebesac/data
-#        sudo chown -R 1001:1001 /srv/docker/jaimebesac/data
 #   3) Générer le hash du mot de passe sur ton PC :  npm run auth:hash -- "ton-mot-de-passe"
 #      et un secret :  openssl rand -hex 32   (idem pour CRON_SECRET)
 #   4) Remplir AUTH_EMAIL / AUTH_PASSWORD_HASH / SESSION_SECRET / CRON_SECRET ci-dessous.

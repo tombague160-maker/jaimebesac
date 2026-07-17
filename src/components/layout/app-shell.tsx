@@ -92,7 +92,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 function AuthenticatedShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { data, updateValue, saveStatus, error } = useWorkspace();
+  const { data, updateValue, saveStatus, error, reload } = useWorkspace();
   const { clients, contentIdeas, newsItems, publications, reminders, shootings } = data;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [quickOpen, setQuickOpen] = useState(false);
@@ -484,8 +484,11 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
       </AnimatePresence>
 
       {saveStatus === "error" ? (
-        <div className="fixed bottom-5 left-1/2 z-50 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg border border-danger-border bg-card px-4 py-3 text-sm font-bold text-danger shadow-lg">
-          {error ?? "La sauvegarde est momentanément indisponible."}
+        <div className="fixed bottom-5 left-1/2 z-50 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-3 rounded-lg border border-danger-border bg-card px-4 py-3 text-sm font-bold text-danger shadow-lg">
+          <span className="min-w-0">{error ?? "La sauvegarde est momentanément indisponible."}</span>
+          <Button variant="secondary" size="sm" onClick={() => reload()}>
+            Réessayer
+          </Button>
         </div>
       ) : null}
     </div>

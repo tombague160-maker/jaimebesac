@@ -62,7 +62,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const fetchWorkspace = useCallback(async () => {
     const response = await fetch("/api/workspace", { cache: "no-store" });
-    if (!response.ok) throw new Error("Impossible de charger les donnees de travail.");
+    if (!response.ok) {
+      // Surface the real server error (e.g. a SQLite permission problem) instead
+      // of a generic message, so the cause is diagnosable.
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(payload?.error || `Impossible de charger les données (HTTP ${response.status}).`);
+    }
     return (await response.json()) as WorkspaceResponse;
   }, []);
 
