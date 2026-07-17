@@ -1,6 +1,8 @@
 import "server-only";
 
 import { createHash } from "node:crypto";
+import { mkdirSync } from "node:fs";
+import { dirname } from "node:path";
 import Database from "better-sqlite3";
 import { Redis } from "@upstash/redis";
 import { createEmptyWorkspace } from "@/lib/workspace-defaults";
@@ -52,7 +54,14 @@ function sqliteClient() {
   }
 
   if (!globalForStore.workspaceSqlite) {
-    const sqlite = new Database(sqlitePath());
+    const dbPath = sqlitePath();
+    // Ensure the parent directory exists (first run / fresh volume).
+    try {
+      mkdirSync(dirname(dbPath), { recursive: true });
+    } catch {
+      /* the directory may already exist or be a mount root */
+    }
+    const sqlite = new Database(dbPath);
     sqlite.pragma("journal_mode = WAL");
     sqlite.exec(`
       CREATE TABLE IF NOT EXISTS workspace_state (

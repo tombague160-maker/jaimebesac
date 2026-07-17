@@ -31,7 +31,10 @@ ENV HOSTNAME=0.0.0.0
 # SQLite lives in the mounted /data volume.
 ENV DATABASE_URL=file:/data/dev.db
 
-RUN groupadd --system --gid 1001 nodejs \
+# gosu lets the entrypoint drop from root to the app user after fixing /data perms.
+RUN apt-get update && apt-get install -y --no-install-recommends gosu \
+  && rm -rf /var/lib/apt/lists/* \
+  && groupadd --system --gid 1001 nodejs \
   && useradd --system --uid 1001 --gid nodejs nextjs \
   && mkdir -p /data \
   && chown -R nextjs:nodejs /data
@@ -43,9 +46,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 # Safety net: ensure the native better-sqlite3 binary is present in the runtime
 # image even if output tracing missed it.
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-USER nextjs
+# NOTE: runs as root so the entrypoint can chown the (possibly root-owned) bind
+# mount /data, then drops to the unprivileged "nextjs" user via gosu.
 EXPOSE 3000
 VOLUME ["/data"]
 
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["node", "server.js"]
