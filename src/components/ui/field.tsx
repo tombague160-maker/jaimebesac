@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 const controlClass =
-  "h-10 min-w-0 max-w-full w-full rounded-lg border border-[#D8E5EC] bg-white px-3 text-sm text-[#18232B] outline-none transition placeholder:text-[#8697A2] focus:border-[#5EADD3] focus:ring-4 focus:ring-[#5EADD3]/15 hover:border-[#9FD8F3]";
+  "h-10 min-w-0 max-w-full w-full rounded-lg border border-line bg-card px-3 text-sm text-ink outline-none transition placeholder:text-muted-soft focus:border-blue focus:ring-4 focus:ring-blue/15 hover:border-blue-soft";
 
 export function TextInput({
   className,
@@ -29,7 +29,7 @@ export function TextArea({
   return (
     <textarea
       className={cn(
-        "min-h-28 min-w-0 max-w-full w-full resize-y rounded-lg border border-[#D8E5EC] bg-white px-3 py-2 text-sm text-[#18232B] outline-none transition placeholder:text-[#8697A2] focus:border-[#5EADD3] focus:ring-4 focus:ring-[#5EADD3]/15 hover:border-[#9FD8F3]",
+        "min-h-28 min-w-0 max-w-full w-full resize-y rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink outline-none transition placeholder:text-muted-soft focus:border-blue focus:ring-4 focus:ring-blue/15 hover:border-blue-soft",
         className,
       )}
       {...props}
@@ -43,7 +43,7 @@ export function Label({
   ...props
 }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
-    <label className={cn("text-xs font-bold text-[#596A76]", className)} {...props}>
+    <label className={cn("text-xs font-bold text-muted", className)} {...props}>
       {children}
     </label>
   );

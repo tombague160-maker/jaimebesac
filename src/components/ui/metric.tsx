@@ -15,10 +15,10 @@ export function Metric({
     <Card>
       <CardContent className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-bold text-[#596A76]">{label}</p>
-          <p className="mt-2 text-2xl font-black text-[#18232B]">{value}</p>
+          <p className="text-xs font-bold text-muted">{label}</p>
+          <p className="mt-2 text-2xl font-black text-ink">{value}</p>
         </div>
-        <Icon className="h-5 w-5 text-[#5EADD3]" />
+        <Icon className="h-5 w-5 text-blue" />
       </CardContent>
     </Card>
   );

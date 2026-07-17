@@ -104,11 +104,11 @@ export function PublicationsWorkspace() {
       <Card>
         <CardContent className="flex flex-col justify-between gap-4 p-5 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-black uppercase text-[#5EADD3]">Calendrier éditorial</p>
-            <h1 className="mt-1 text-2xl font-black text-[#18232B] sm:text-3xl">
+            <p className="text-xs font-black uppercase text-eyebrow">Calendrier éditorial</p>
+            <h1 className="mt-1 text-2xl font-black text-ink sm:text-3xl">
               Publications sociales et contenus programmés.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#596A76]">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
               Suivez chaque publication, sa plateforme, son client, sa validation et son lien tournage.
             </p>
           </div>
@@ -129,7 +129,7 @@ export function PublicationsWorkspace() {
       <Card>
         <CardContent className="grid gap-3 p-4 xl:grid-cols-[1fr_170px_190px_220px_auto]">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#596A76]" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <TextInput
               className="pl-9"
               placeholder="Rechercher titre, caption, hashtag..."
@@ -175,14 +175,14 @@ export function PublicationsWorkspace() {
         </CardContent>
       </Card>
 
-      <p className="text-sm font-bold text-[#596A76]">{notice}</p>
+      <p className="text-sm font-bold text-muted">{notice}</p>
 
       {view === "calendar" ? (
         <section className="premium-scrollbar grid gap-3 overflow-x-auto pb-2 xl:grid-cols-7">
           {weekDays.map((day) => (
             <Card key={day} className="min-w-[220px]">
               <CardHeader>
-                <p className="text-sm font-black text-[#18232B]">{formatDate(day, "EEEE d MMM")}</p>
+                <p className="text-sm font-black text-ink">{formatDate(day, "EEEE d MMM")}</p>
               </CardHeader>
               <CardContent className="space-y-3">
                 {filteredPublications.filter((publication) => publication.date === day).length ? (
@@ -197,7 +197,7 @@ export function PublicationsWorkspace() {
                       />
                     ))
                 ) : (
-                  <div className="rounded-lg border border-dashed border-[#C8D9E2] bg-[#FBFAF2] p-5 text-center text-xs font-bold text-[#8697A2]">
+                  <div className="rounded-lg border border-dashed border-line-strong bg-surface p-5 text-center text-xs font-bold text-muted-soft">
                     Créneau libre
                   </div>
                 )}
@@ -214,7 +214,7 @@ export function PublicationsWorkspace() {
               <CardHeader>
                 <div className="flex items-center justify-between gap-2">
                   <Badge config={publicationStatusConfig[status]} />
-                  <span className="text-sm font-black text-[#18232B]">
+                  <span className="text-sm font-black text-ink">
                     {filteredPublications.filter((publication) => publication.status === status).length}
                   </span>
                 </div>
@@ -240,7 +240,7 @@ export function PublicationsWorkspace() {
         <Card className="overflow-hidden">
           <div className="premium-scrollbar overflow-x-auto">
             <table className="w-full min-w-[920px] text-left text-sm">
-              <thead className="bg-[#FBFAF2] text-xs font-black uppercase text-[#596A76]">
+              <thead className="bg-surface text-xs font-black uppercase text-muted">
                 <tr>
                   <th className="px-4 py-3">Titre</th>
                   <th className="px-4 py-3">Client</th>
@@ -250,13 +250,13 @@ export function PublicationsWorkspace() {
                   <th className="px-4 py-3">Validation</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#D8E5EC] bg-white">
+              <tbody className="divide-y divide-[#D8E5EC] bg-card">
                 {filteredPublications.map((publication) => (
                   <tr
                     key={publication.id}
                     role="button"
                     tabIndex={0}
-                    className="cursor-pointer hover:bg-[#F4FBFD] focus:bg-[#F4FBFD] focus:outline-none"
+                    className="cursor-pointer hover:bg-hover focus:bg-hover focus:outline-none"
                     onClick={() => setSelectedId(publication.id)}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
@@ -265,9 +265,9 @@ export function PublicationsWorkspace() {
                       }
                     }}
                   >
-                    <td className="px-4 py-3 font-black text-[#18232B]">{publication.title}</td>
-                    <td className="px-4 py-3 text-[#596A76]">{getClientName(publication.clientId, clients)}</td>
-                    <td className="px-4 py-3 text-[#596A76]">
+                    <td className="px-4 py-3 font-black text-ink">{publication.title}</td>
+                    <td className="px-4 py-3 text-muted">{getClientName(publication.clientId, clients)}</td>
+                    <td className="px-4 py-3 text-muted">
                       {formatDate(publication.date)} · {publication.time}
                     </td>
                     <td className="px-4 py-3">
@@ -276,7 +276,7 @@ export function PublicationsWorkspace() {
                     <td className="px-4 py-3">
                       <Badge config={publicationStatusConfig[publication.status]} />
                     </td>
-                    <td className="px-4 py-3 text-[#596A76]">{publication.clientValidationStatus}</td>
+                    <td className="px-4 py-3 text-muted">{publication.clientValidationStatus}</td>
                   </tr>
                 ))}
               </tbody>
@@ -396,17 +396,17 @@ function PublicationMiniCard({
 }) {
   return (
     <button
-      className="w-full rounded-lg border border-[#D8E5EC] bg-white p-3 text-left transition hover:border-[#9FD8F3] hover:bg-[#F4FBFD]"
+      className="w-full rounded-lg border border-line bg-card p-3 text-left transition hover:border-blue-soft hover:bg-hover"
       onClick={onOpen}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="font-black text-[#18232B]">{publication.title}</p>
+        <p className="font-black text-ink">{publication.title}</p>
         <Badge config={platformConfig[publication.platform]} />
       </div>
-      <p className="mt-2 text-xs font-bold text-[#596A76]">{clientName}</p>
+      <p className="mt-2 text-xs font-bold text-muted">{clientName}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Badge config={publicationStatusConfig[publication.status]} />
-        <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+        <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
           {publication.time}
         </span>
       </div>
@@ -430,7 +430,7 @@ function PublicationDetail({
       <div className="flex flex-wrap gap-2">
         <Badge config={platformConfig[publication.platform]} />
         <Badge config={publicationStatusConfig[publication.status]} />
-        <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+        <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
           Validation : {publication.clientValidationStatus}
         </span>
       </div>

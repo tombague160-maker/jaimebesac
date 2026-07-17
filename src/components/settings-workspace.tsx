@@ -93,11 +93,11 @@ export function SettingsWorkspace() {
       <Card>
         <CardContent className="flex flex-col justify-between gap-4 p-5 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-black uppercase text-[#5EADD3]">Paramètres</p>
-            <h1 className="mt-1 text-2xl font-black text-[#18232B] sm:text-3xl">
+            <p className="text-xs font-black uppercase text-eyebrow">Paramètres</p>
+            <h1 className="mt-1 text-2xl font-black text-ink sm:text-3xl">
               Configuration du studio et de sa mémoire.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#596A76]">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
               Identité, sources d&apos;actualités, prestations et export de vos données de travail.
             </p>
           </div>
@@ -108,7 +108,7 @@ export function SettingsWorkspace() {
         </CardContent>
       </Card>
 
-      <p className="text-sm font-bold text-[#596A76]">{notice}</p>
+      <p className="text-sm font-bold text-muted">{notice}</p>
 
       <section className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
         <Card>
@@ -116,7 +116,7 @@ export function SettingsWorkspace() {
             <SectionHeading title="Profil utilisateur" />
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid h-16 w-16 place-items-center rounded-lg bg-[#E7F5FA] text-lg font-black text-[#18232B]">
+            <div className="grid h-16 w-16 place-items-center rounded-lg bg-blue-wash text-lg font-black text-ink">
               {getInitials(settings.displayName) || "JB"}
             </div>
             <Field
@@ -131,23 +131,6 @@ export function SettingsWorkspace() {
               icon={ShieldCheck}
               onChange={(value) => setSettings((current) => ({ ...current, email: value }))}
             />
-            <div className="grid gap-2">
-              <Label>Préférence d&apos;affichage</Label>
-              <Select
-                value={settings.density}
-                onChange={(event) => {
-                  setSettings((current) => ({
-                    ...current,
-                    density: event.target.value as typeof current.density,
-                  }));
-                  setNotice("Préférence d'affichage sauvegardée.");
-                }}
-              >
-                <option value="comfortable">Confortable</option>
-                <option value="compact">Compact</option>
-                <option value="large">Large</option>
-              </Select>
-            </div>
           </CardContent>
         </Card>
 
@@ -156,7 +139,7 @@ export function SettingsWorkspace() {
             <SectionHeading title="Identité de l'application" />
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
-            <div className="relative min-h-36 overflow-hidden rounded-lg border-2 border-[#18232B] bg-white shadow-[6px_6px_0_rgba(24,35,43,0.12)] md:col-span-2">
+            <div className="relative min-h-36 overflow-hidden rounded-lg border-2 border-strong bg-card shadow-[6px_6px_0_rgba(24,35,43,0.12)] md:col-span-2">
               <Image
                 src="/logo-jaime-besac.jpeg"
                 alt="Logo J'aime Besac"
@@ -167,8 +150,8 @@ export function SettingsWorkspace() {
             </div>
             <Field label="Nom" value="J'aime Besac Studio" icon={Settings} />
             <Field label="Univers" value="Média local, créatif, premium" icon={Palette} />
-            <div className="rounded-lg border border-[#D8E5EC] bg-white p-3 md:col-span-2">
-              <p className="text-xs font-black uppercase text-[#596A76]">Palette extraite du logo</p>
+            <div className="rounded-lg border border-line bg-card p-3 md:col-span-2">
+              <p className="text-xs font-black uppercase text-muted">Palette extraite du logo</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {[
                   brandColors.paper,
@@ -183,7 +166,7 @@ export function SettingsWorkspace() {
                 ].map((color) => (
                   <span
                     key={color}
-                    className="h-9 w-16 rounded-lg border border-[#D8E5EC]"
+                    className="h-9 w-16 rounded-lg border border-line"
                     style={{ backgroundColor: color }}
                     title={color}
                   />
@@ -204,11 +187,11 @@ export function SettingsWorkspace() {
           </CardHeader>
           <CardContent className="space-y-3">
             {newsSources.length ? newsSources.map((source) => (
-              <div key={source.id} className="rounded-lg border border-[#D8E5EC] bg-white p-3">
+              <div key={source.id} className="rounded-lg border border-line bg-card p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="font-black text-[#18232B]">{source.name}</p>
-                    <p className="mt-1 break-all text-xs font-bold text-[#596A76]">{source.rssUrl || source.url}</p>
+                    <p className="font-black text-ink">{source.name}</p>
+                    <p className="mt-1 break-all text-xs font-bold text-muted">{source.rssUrl || source.url}</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
                     <button
@@ -230,7 +213,7 @@ export function SettingsWorkspace() {
                 </div>
               </div>
             )) : (
-              <p className="rounded-lg border border-dashed border-[#C8D9E2] bg-[#FBFAF2] p-5 text-center text-sm font-bold text-[#596A76]">
+              <p className="rounded-lg border border-dashed border-line-strong bg-surface p-5 text-center text-sm font-bold text-muted">
                 Aucune source. Ajoutez un flux RSS pour démarrer la veille.
               </p>
             )}
@@ -243,7 +226,7 @@ export function SettingsWorkspace() {
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
             {newsCategories.map((category) => (
-              <span key={category} className="rounded-full bg-[#FBFAF2] px-3 py-1.5 text-xs font-bold text-[#596A76]">
+              <span key={category} className="rounded-full bg-surface px-3 py-1.5 text-xs font-bold text-muted">
                 {category}
               </span>
             ))}
@@ -259,11 +242,11 @@ export function SettingsWorkspace() {
           </CardHeader>
           <CardContent className="space-y-3">
             {serviceOffers.length ? serviceOffers.map((offer) => (
-              <div key={offer.id} className="rounded-lg border border-[#D8E5EC] bg-white p-3">
+              <div key={offer.id} className="rounded-lg border border-line bg-card p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-black text-[#18232B]">{offer.name}</p>
-                    <p className="mt-1 text-sm text-[#596A76]">{offer.category} · {formatCurrency(offer.price)}</p>
+                    <p className="font-black text-ink">{offer.name}</p>
+                    <p className="mt-1 text-sm text-muted">{offer.category} · {formatCurrency(offer.price)}</p>
                   </div>
                   <Button
                     size="icon"
@@ -276,7 +259,7 @@ export function SettingsWorkspace() {
                 </div>
               </div>
             )) : (
-              <p className="rounded-lg border border-dashed border-[#C8D9E2] bg-[#FBFAF2] p-5 text-center text-sm font-bold text-[#596A76]">
+              <p className="rounded-lg border border-dashed border-line-strong bg-surface p-5 text-center text-sm font-bold text-muted">
                 Aucune prestation enregistrée.
               </p>
             )}
@@ -291,9 +274,9 @@ export function SettingsWorkspace() {
           </CardHeader>
           <CardContent className="grid gap-3 sm:grid-cols-2">
             {Object.entries(eventTypeConfig).map(([key, config]) => (
-              <div key={key} className="flex items-center justify-between rounded-lg border border-[#D8E5EC] bg-white p-3">
-                <span className="text-sm font-bold text-[#18232B]">{config.label}</span>
-                <span className="h-6 w-10 rounded-lg border border-[#D8E5EC]" style={{ backgroundColor: config.bg }} />
+              <div key={key} className="flex items-center justify-between rounded-lg border border-line bg-card p-3">
+                <span className="text-sm font-bold text-ink">{config.label}</span>
+                <span className="h-6 w-10 rounded-lg border border-line" style={{ backgroundColor: config.bg }} />
               </div>
             ))}
           </CardContent>
@@ -307,12 +290,12 @@ export function SettingsWorkspace() {
             {integrations.map((integration) => {
               const Icon = integration.icon;
               return (
-                <div key={integration.name} className="rounded-lg border border-[#D8E5EC] bg-white p-3">
+                <div key={integration.name} className="rounded-lg border border-line bg-card p-3">
                   <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-[#5EADD3]" />
-                    <p className="font-black text-[#18232B]">{integration.name}</p>
+                    <Icon className="h-4 w-4 text-blue" />
+                    <p className="font-black text-ink">{integration.name}</p>
                   </div>
-                  <p className="mt-2 text-sm text-[#596A76]">{integration.status}</p>
+                  <p className="mt-2 text-sm text-muted">{integration.status}</p>
                 </div>
               );
             })}
@@ -338,7 +321,7 @@ export function SettingsWorkspace() {
           {chartPalette.map((color) => (
             <span
               key={color}
-              className="h-10 w-20 rounded-lg border border-[#D8E5EC]"
+              className="h-10 w-20 rounded-lg border border-line"
               style={{ backgroundColor: color }}
               title={color}
             />
@@ -436,7 +419,7 @@ export function SettingsWorkspace() {
         onClose={() => setPendingDelete(null)}
       >
         <div className="space-y-4">
-          <p className="text-sm text-[#596A76]">
+          <p className="text-sm text-muted">
             Cette action est irréversible. La configuration (URL, fiabilité, catégorie) sera perdue.
           </p>
           <div className="flex justify-end gap-2">
@@ -466,10 +449,10 @@ function Field({
   onChange?: (value: string) => void;
 }) {
   return (
-    <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
+    <div className="rounded-lg border border-line bg-card p-3">
       <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 text-[#5EADD3]" />
-        <p className="text-xs font-black uppercase text-[#596A76]">{label}</p>
+        <Icon className="h-4 w-4 text-blue" />
+        <p className="text-xs font-black uppercase text-muted">{label}</p>
       </div>
       <TextInput
         className="mt-2"

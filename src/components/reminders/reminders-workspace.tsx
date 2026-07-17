@@ -113,11 +113,11 @@ export function RemindersWorkspace() {
       <Card>
         <CardContent className="flex flex-col justify-between gap-4 p-5 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-black uppercase text-[#5EADD3]">Relances</p>
-            <h1 className="mt-1 text-2xl font-black text-[#18232B] sm:text-3xl">
+            <p className="text-xs font-black uppercase text-eyebrow">Relances</p>
+            <h1 className="mt-1 text-2xl font-black text-ink sm:text-3xl">
               Priorités commerciales et validations à ne pas manquer.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#596A76]">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
               Prospects, clients, validations vidéo, paiements, devis, partenariats et renouvellements.
             </p>
           </div>
@@ -138,7 +138,7 @@ export function RemindersWorkspace() {
       <Card>
         <CardContent className="p-4">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#596A76]" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <TextInput
               className="pl-9"
               value={query}
@@ -149,7 +149,7 @@ export function RemindersWorkspace() {
         </CardContent>
       </Card>
 
-      <p className="text-sm font-bold text-[#596A76]">{notice}</p>
+      <p className="text-sm font-bold text-muted">{notice}</p>
 
       <section className="grid gap-4 xl:grid-cols-4">
         <ReminderColumn title="En retard" items={grouped.overdue} clients={clients} onOpen={setSelectedId} onDone={updateStatus} />
@@ -267,16 +267,16 @@ function ReminderColumn({
       <CardContent className="space-y-3">
         {items.length ? (
           items.map((reminder) => (
-            <div key={reminder.id} className="rounded-lg border border-[#D8E5EC] bg-white p-3">
+            <div key={reminder.id} className="rounded-lg border border-line bg-card p-3">
               <button className="w-full text-left" onClick={() => onOpen(reminder.id)}>
                 <div className="flex items-start justify-between gap-2">
-                  <p className="font-black text-[#18232B]">{reminder.title}</p>
+                  <p className="font-black text-ink">{reminder.title}</p>
                   <Badge config={reminderStatusConfig[reminder.status]} />
                 </div>
-                <p className="mt-2 text-sm text-[#596A76]">{getClientName(reminder.clientId, clients)}</p>
+                <p className="mt-2 text-sm text-muted">{getClientName(reminder.clientId, clients)}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Badge config={priorityConfig[reminder.priority]} />
-                  <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+                  <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
                     {channelLabels[reminder.channel]}
                   </span>
                 </div>
@@ -296,7 +296,7 @@ function ReminderColumn({
             </div>
           ))
         ) : (
-          <div className="rounded-lg border border-dashed border-[#C8D9E2] bg-[#FBFAF2] p-6 text-center text-sm font-bold text-[#8697A2]">
+          <div className="rounded-lg border border-dashed border-line-strong bg-surface p-6 text-center text-sm font-bold text-muted-soft">
             Rien dans cette section
           </div>
         )}
@@ -321,21 +321,21 @@ function ReminderDetail({
       <div className="flex flex-wrap gap-2">
         <Badge config={reminderStatusConfig[reminder.status]} />
         <Badge config={priorityConfig[reminder.priority]} />
-        <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+        <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
           {reminderTypeLabels[reminder.type]}
         </span>
-        <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+        <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
           {channelLabels[reminder.channel]}
         </span>
       </div>
       <InfoRow label="Client" value={clientName} />
       <InfoRow label="Date prévue" value={formatDate(reminder.dueDate)} />
       <InfoRow label="Note" value={reminder.notes || "Aucune note"} />
-      <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
-        <p className="text-xs font-black uppercase text-[#596A76]">Historique</p>
+      <div className="rounded-lg border border-line bg-card p-3">
+        <p className="text-xs font-black uppercase text-muted">Historique</p>
         <div className="mt-2 space-y-2">
           {reminder.history.map((entry, index) => (
-            <p key={`${index}-${entry}`} className="text-sm font-bold text-[#18232B]">
+            <p key={`${index}-${entry}`} className="text-sm font-bold text-ink">
               {entry}
             </p>
           ))}

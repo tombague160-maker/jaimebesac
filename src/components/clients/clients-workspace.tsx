@@ -116,11 +116,11 @@ export function ClientsWorkspace() {
       <Card>
         <CardContent className="flex flex-col justify-between gap-4 p-5 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-black uppercase text-[#5EADD3]">CRM local</p>
-            <h1 className="mt-1 text-2xl font-black text-[#18232B] sm:text-3xl">
+            <p className="text-xs font-black uppercase text-eyebrow">CRM local</p>
+            <h1 className="mt-1 text-2xl font-black text-ink sm:text-3xl">
               Clients, prospects et partenaires.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#596A76]">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
               Fiches complètes, pipeline commercial, relances et liens directs vers tournages et publications.
             </p>
           </div>
@@ -141,7 +141,7 @@ export function ClientsWorkspace() {
       <Card>
         <CardContent className="grid gap-3 p-4 lg:grid-cols-[1fr_220px_auto]">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#596A76]" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <TextInput
               className="pl-9"
               placeholder="Rechercher entreprise, secteur, contact..."
@@ -168,7 +168,7 @@ export function ClientsWorkspace() {
         </CardContent>
       </Card>
 
-      <p className="text-sm font-bold text-[#596A76]">
+      <p className="text-sm font-bold text-muted">
         {isLoading ? "Chargement des donnees persistantes..." : notice}
       </p>
 
@@ -187,7 +187,7 @@ export function ClientsWorkspace() {
               <CardHeader>
                 <div className="flex items-center justify-between gap-2">
                   <Badge config={clientStatusConfig[stage]} />
-                  <span className="text-sm font-black text-[#18232B]">
+                  <span className="text-sm font-black text-ink">
                     {filteredClients.filter((client) => client.status === stage).length}
                   </span>
                 </div>
@@ -199,11 +199,11 @@ export function ClientsWorkspace() {
                     <button
                       key={client.id}
                       onClick={() => setSelectedId(client.id)}
-                      className="w-full rounded-lg border border-[#D8E5EC] bg-white p-3 text-left transition hover:border-[#9FD8F3]"
+                      className="w-full rounded-lg border border-line bg-card p-3 text-left transition hover:border-blue-soft"
                     >
-                      <p className="font-black text-[#18232B]">{client.name}</p>
-                      <p className="mt-1 text-xs font-bold text-[#596A76]">{client.sector}</p>
-                      <p className="mt-2 text-sm text-[#596A76]">{formatCurrency(client.estimatedRevenue)}</p>
+                      <p className="font-black text-ink">{client.name}</p>
+                      <p className="mt-1 text-xs font-bold text-muted">{client.sector}</p>
+                      <p className="mt-2 text-sm text-muted">{formatCurrency(client.estimatedRevenue)}</p>
                     </button>
                   ))}
               </CardContent>
@@ -216,7 +216,7 @@ export function ClientsWorkspace() {
         <Card className="overflow-hidden">
           <div className="premium-scrollbar overflow-x-auto">
             <table className="w-full min-w-[860px] text-left text-sm">
-              <thead className="bg-[#FBFAF2] text-xs font-black uppercase text-[#596A76]">
+              <thead className="bg-surface text-xs font-black uppercase text-muted">
                 <tr>
                   <th className="px-4 py-3">Entreprise</th>
                   <th className="px-4 py-3">Contact</th>
@@ -226,19 +226,19 @@ export function ClientsWorkspace() {
                   <th className="px-4 py-3">CA réalisé</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#D8E5EC] bg-white">
+              <tbody className="divide-y divide-[#D8E5EC] bg-card">
                 {filteredClients.map((client) => (
-                  <tr key={client.id} className="cursor-pointer hover:bg-[#F4FBFD]" onClick={() => setSelectedId(client.id)}>
-                    <td className="px-4 py-3 font-black text-[#18232B]">{client.name}</td>
-                    <td className="px-4 py-3 text-[#596A76]">{client.contactName}</td>
+                  <tr key={client.id} className="cursor-pointer hover:bg-hover" onClick={() => setSelectedId(client.id)}>
+                    <td className="px-4 py-3 font-black text-ink">{client.name}</td>
+                    <td className="px-4 py-3 text-muted">{client.contactName}</td>
                     <td className="px-4 py-3">
                       <Badge config={clientStatusConfig[client.status]} />
                     </td>
                     <td className="px-4 py-3">
                       <Badge config={priorityConfig[client.priority]} />
                     </td>
-                    <td className="px-4 py-3 text-[#596A76]">{formatDate(client.nextFollowUpDate)}</td>
-                    <td className="px-4 py-3 font-bold text-[#18232B]">{formatCurrency(client.actualRevenue)}</td>
+                    <td className="px-4 py-3 text-muted">{formatDate(client.nextFollowUpDate)}</td>
+                    <td className="px-4 py-3 font-bold text-ink">{formatCurrency(client.actualRevenue)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -347,35 +347,35 @@ export function ClientsWorkspace() {
 function ClientCard({ client, onOpen }: { client: Client; onOpen: () => void }) {
   return (
     <button
-      className="group rounded-lg border border-[#D8E5EC] bg-white p-4 text-left shadow-[0_10px_26px_rgba(24,35,43,0.04)] transition hover:-translate-y-0.5 hover:border-[#9FD8F3] hover:shadow-[0_18px_42px_rgba(24,35,43,0.08)]"
+      className="group rounded-lg border border-line bg-card p-4 text-left shadow-[0_10px_26px_rgba(24,35,43,0.04)] transition hover:-translate-y-0.5 hover:border-blue-soft hover:shadow-[0_18px_42px_rgba(24,35,43,0.08)]"
       onClick={onOpen}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-[#E7F5FA] text-sm font-black text-[#18232B]">
+          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-blue-wash text-sm font-black text-ink">
             {client.logo}
           </div>
           <div className="min-w-0">
-            <p className="truncate font-black text-[#18232B]">{client.name}</p>
-            <p className="mt-1 truncate text-sm text-[#596A76]">{client.sector}</p>
+            <p className="truncate font-black text-ink">{client.name}</p>
+            <p className="mt-1 truncate text-sm text-muted">{client.sector}</p>
           </div>
         </div>
         <Badge config={priorityConfig[client.priority]} />
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         <Badge config={clientStatusConfig[client.status]} />
-        <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+        <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
           {formatDate(client.nextFollowUpDate)}
         </span>
       </div>
       <div className="mt-4 grid grid-cols-2 gap-2">
-        <div className="rounded-lg bg-[#FBFAF2] p-3">
-          <p className="text-xs font-bold text-[#596A76]">CA réalisé</p>
-          <p className="mt-1 font-black text-[#18232B]">{formatCurrency(client.actualRevenue)}</p>
+        <div className="rounded-lg bg-surface p-3">
+          <p className="text-xs font-bold text-muted">CA réalisé</p>
+          <p className="mt-1 font-black text-ink">{formatCurrency(client.actualRevenue)}</p>
         </div>
-        <div className="rounded-lg bg-[#FBFAF2] p-3">
-          <p className="text-xs font-bold text-[#596A76]">Potentiel</p>
-          <p className="mt-1 font-black text-[#18232B]">{formatCurrency(client.estimatedRevenue)}</p>
+        <div className="rounded-lg bg-surface p-3">
+          <p className="text-xs font-bold text-muted">Potentiel</p>
+          <p className="mt-1 font-black text-ink">{formatCurrency(client.estimatedRevenue)}</p>
         </div>
       </div>
     </button>
@@ -397,14 +397,14 @@ function ClientDetail({
 }) {
   return (
     <div className="space-y-5">
-      <div className="rounded-lg bg-[#FBFAF2] p-4">
+      <div className="rounded-lg bg-surface p-4">
         <div className="flex items-center gap-3">
-          <div className="grid h-14 w-14 place-items-center rounded-lg bg-[#E7F5FA] text-lg font-black text-[#18232B]">
+          <div className="grid h-14 w-14 place-items-center rounded-lg bg-blue-wash text-lg font-black text-ink">
             {client.logo}
           </div>
           <div>
             <Badge config={clientStatusConfig[client.status]} />
-            <p className="mt-2 text-sm text-[#596A76]">{client.notes}</p>
+            <p className="mt-2 text-sm text-muted">{client.notes}</p>
           </div>
         </div>
       </div>
@@ -425,12 +425,12 @@ function ClientDetail({
       </div>
 
       <div className="space-y-2">
-        <p className="text-xs font-black uppercase text-[#596A76]">Changer le statut</p>
+        <p className="text-xs font-black uppercase text-muted">Changer le statut</p>
         <div className="grid gap-2">
           {clientStages.slice(0, 6).map((status) => (
             <button
               key={status}
-              className="rounded-lg border border-[#D8E5EC] bg-white p-3 text-left transition hover:border-[#9FD8F3]"
+              className="rounded-lg border border-line bg-card p-3 text-left transition hover:border-blue-soft"
               onClick={() => onStatusChange(status)}
             >
               <Badge config={clientStatusConfig[status]} />
@@ -460,20 +460,20 @@ function LinkedList({
   items: string[];
 }) {
   return (
-    <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
-      <div className="flex items-center gap-2 text-sm font-black text-[#18232B]">
-        <Icon className="h-4 w-4 text-[#5EADD3]" />
+    <div className="rounded-lg border border-line bg-card p-3">
+      <div className="flex items-center gap-2 text-sm font-black text-ink">
+        <Icon className="h-4 w-4 text-blue" />
         {title}
       </div>
       <div className="mt-2 space-y-1">
         {items.length ? (
           items.map((item) => (
-            <p key={item} className="text-sm text-[#596A76]">
+            <p key={item} className="text-sm text-muted">
               {item}
             </p>
           ))
         ) : (
-          <p className="text-sm text-[#8697A2]">Aucun élément lié</p>
+          <p className="text-sm text-muted-soft">Aucun élément lié</p>
         )}
       </div>
     </div>

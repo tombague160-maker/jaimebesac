@@ -22,7 +22,7 @@ export function Modal({ open, title, subtitle, onClose, children }: ModalProps) 
           <motion.button
             aria-label="Fermer la modale"
             tabIndex={-1}
-            className="absolute inset-0 bg-[#18232B]/22 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -34,16 +34,16 @@ export function Modal({ open, title, subtitle, onClose, children }: ModalProps) 
             aria-modal="true"
             aria-label={title}
             tabIndex={-1}
-            className="relative z-10 flex max-h-[calc(100dvh-2rem)] w-full max-w-lg min-w-0 flex-col overflow-hidden rounded-lg border border-[#D8E5EC] bg-white shadow-[0_24px_80px_rgba(24,35,43,0.22)] outline-none"
+            className="relative z-10 flex max-h-[calc(100dvh-2rem)] w-full max-w-lg min-w-0 flex-col overflow-hidden rounded-lg border border-line bg-card shadow-[0_24px_80px_rgba(24,35,43,0.22)] outline-none"
             initial={{ opacity: 0, y: 18, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 18, scale: 0.98 }}
             transition={{ duration: 0.18 }}
           >
-            <div className="flex items-start justify-between gap-4 border-b border-[#D8E5EC] p-5">
+            <div className="flex items-start justify-between gap-4 border-b border-line p-5">
               <div className="min-w-0">
-                <h2 className="break-words text-lg font-black text-[#18232B]">{title}</h2>
-                {subtitle ? <p className="mt-1 text-sm text-[#596A76]">{subtitle}</p> : null}
+                <h2 className="break-words text-lg font-black text-ink">{title}</h2>
+                {subtitle ? <p className="mt-1 text-sm text-muted">{subtitle}</p> : null}
               </div>
               <Button variant="ghost" size="icon" onClick={onClose} aria-label="Fermer">
                 <X className="h-4 w-4" />

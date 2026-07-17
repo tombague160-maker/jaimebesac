@@ -152,11 +152,11 @@ export function ShootingsWorkspace() {
       <Card>
         <CardContent className="flex flex-col justify-between gap-4 p-5 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-black uppercase text-[#5EADD3]">Production vidéo</p>
-            <h1 className="mt-1 text-2xl font-black text-[#18232B] sm:text-3xl">
+            <p className="text-xs font-black uppercase text-eyebrow">Production vidéo</p>
+            <h1 className="mt-1 text-2xl font-black text-ink sm:text-3xl">
               Suivi des tournages de l&apos;idée à la publication.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#596A76]">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
               Briefs créatifs, contacts terrain, plateformes, matériel, validation client et actions de passage de statut.
             </p>
           </div>
@@ -177,7 +177,7 @@ export function ShootingsWorkspace() {
       <Card>
         <CardContent className="grid gap-3 p-4 xl:grid-cols-[1fr_190px_220px_auto]">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#596A76]" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <TextInput
               className="pl-9"
               placeholder="Rechercher brief, client, lieu..."
@@ -211,7 +211,7 @@ export function ShootingsWorkspace() {
         </CardContent>
       </Card>
 
-      <p className="text-sm font-bold text-[#596A76]">{notice}</p>
+      <p className="text-sm font-bold text-muted">{notice}</p>
 
       {view === "cards" ? (
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -231,7 +231,7 @@ export function ShootingsWorkspace() {
               <CardHeader>
                 <div className="flex items-center justify-between gap-2">
                   <Badge config={shootingStatusConfig[stage]} />
-                  <span className="text-sm font-black text-[#18232B]">
+                  <span className="text-sm font-black text-ink">
                     {filteredShootings.filter((shooting) => shooting.status === stage).length}
                   </span>
                 </div>
@@ -242,12 +242,12 @@ export function ShootingsWorkspace() {
                   .map((shooting) => (
                     <button
                       key={shooting.id}
-                      className="w-full rounded-lg border border-[#D8E5EC] bg-white p-3 text-left transition hover:border-[#9FD8F3]"
+                      className="w-full rounded-lg border border-line bg-card p-3 text-left transition hover:border-blue-soft"
                       onClick={() => setSelectedId(shooting.id)}
                     >
-                      <p className="font-black text-[#18232B]">{shooting.title}</p>
-                      <p className="mt-1 text-xs font-bold text-[#596A76]">{getClientName(shooting.clientId, clients)}</p>
-                      <p className="mt-2 text-sm text-[#596A76]">{formatDate(shooting.date)}</p>
+                      <p className="font-black text-ink">{shooting.title}</p>
+                      <p className="mt-1 text-xs font-bold text-muted">{getClientName(shooting.clientId, clients)}</p>
+                      <p className="mt-2 text-sm text-muted">{formatDate(shooting.date)}</p>
                     </button>
                   ))}
               </CardContent>
@@ -380,17 +380,17 @@ function ShootingCard({
   const progress = Math.max(1, shootingStages.indexOf(shooting.status) + 1);
   return (
     <button
-      className="rounded-lg border border-[#D8E5EC] bg-white p-4 text-left shadow-[0_10px_26px_rgba(24,35,43,0.04)] transition hover:-translate-y-0.5 hover:border-[#9FD8F3] hover:shadow-[0_18px_42px_rgba(24,35,43,0.08)]"
+      className="rounded-lg border border-line bg-card p-4 text-left shadow-[0_10px_26px_rgba(24,35,43,0.04)] transition hover:-translate-y-0.5 hover:border-blue-soft hover:shadow-[0_18px_42px_rgba(24,35,43,0.08)]"
       onClick={onOpen}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-black text-[#18232B]">{shooting.title}</p>
-          <p className="mt-1 text-sm text-[#596A76]">{clientName}</p>
+          <p className="font-black text-ink">{shooting.title}</p>
+          <p className="mt-1 text-sm text-muted">{clientName}</p>
         </div>
         <Badge config={shootingStatusConfig[shooting.status]} />
       </div>
-      <p className="mt-3 text-sm text-[#596A76]">
+      <p className="mt-3 text-sm text-muted">
         {formatDate(shooting.date)} · {formatTimeRange(shooting.startTime, shooting.endTime)}
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -398,13 +398,13 @@ function ShootingCard({
           <Badge key={platform} config={platformConfig[platform]} />
         ))}
       </div>
-      <div className="mt-4 h-2 rounded-full bg-[#F1F3F5]">
+      <div className="mt-4 h-2 rounded-full bg-track">
         <div
-          className="h-2 rounded-full bg-[#5EADD3]"
+          className="h-2 rounded-full bg-blue"
           style={{ width: `${Math.min(100, (progress / shootingStages.length) * 100)}%` }}
         />
       </div>
-      <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#596A76]">{shooting.objective}</p>
+      <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted">{shooting.objective}</p>
     </button>
   );
 }
@@ -427,13 +427,13 @@ function ShootingDetail({
           <Badge key={platform} config={platformConfig[platform]} />
         ))}
       </div>
-      <div className="rounded-lg bg-[#FBFAF2] p-4">
-        <p className="text-xs font-black uppercase text-[#596A76]">Timeline</p>
+      <div className="rounded-lg bg-surface p-4">
+        <p className="text-xs font-black uppercase text-muted">Timeline</p>
         <div className="mt-3 flex gap-1">
           {shootingStages.map((stage) => {
             const active = shootingStages.indexOf(stage) <= shootingStages.indexOf(shooting.status);
             return (
-              <div key={stage} className={cn("h-2 flex-1 rounded-full", active ? "bg-[#5EADD3]" : "bg-[#D8E5EC]")} />
+              <div key={stage} className={cn("h-2 flex-1 rounded-full", active ? "bg-blue" : "bg-line")} />
             );
           })}
         </div>

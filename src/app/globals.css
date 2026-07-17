@@ -1,36 +1,88 @@
 @import "tailwindcss";
 
+/* Light theme tokens (default). Dark overrides live in the .dark block below. */
 :root {
-  --background: #fffdf3;
-  --foreground: #18232b;
-  --brand-ink: #18232b;
-  --brand-ink-soft: #24313a;
-  --brand-blue: #5eadd3;
-  --brand-blue-strong: #469ac4;
-  --brand-blue-soft: #9fd8f3;
-  --brand-blue-wash: #e7f5fa;
-  --brand-paper: #fffdf3;
-  --brand-paper-deep: #fbfaf2;
-  --muted: #596a76;
-  --line: #d8e5ec;
-  --line-soft: #e8f0f4;
-  --surface: #fbfaf2;
-  --pastel-orange: #ffd9b3;
-  --pastel-orange-soft: #fff3e7;
-  --pastel-rose: #f8c7d8;
-  --pastel-rose-soft: #fdedf3;
-  --pastel-green: #bfe7cf;
-  --pastel-green-soft: #eaf8f0;
-  --pastel-yellow: #f7e8a8;
-  --pastel-yellow-soft: #fff8da;
-  --success: #bfe7cf;
-  --warning: #f7e8a8;
-  --danger: #f8c7d8;
+  --paper: #fffdf3;      /* page background */
+  --surface: #fbfaf2;    /* subtle surface */
+  --card: #ffffff;       /* card background (was bg-white) */
+  --ink: #18232b;        /* primary text */
+  --ink-soft: #24313a;
+  --muted: #596a76;      /* secondary text */
+  --muted-soft: #6b7a85; /* tertiary text (bumped for AA vs #8697a2) */
+  --line: #d8e5ec;       /* borders */
+  --line-strong: #c8d9e2;
+  --blue: #5eadd3;       /* accent (icons) */
+  --eyebrow: #287ca8;    /* small uppercase accents (AA vs #5eadd3) */
+  --blue-soft: #9fd8f3;
+  --blue-wash: #e7f5fa;  /* active/selected bg */
+  --blue-wash-2: #d7edf7;/* hover on wash */
+  --hover: #f4fbfd;      /* row hover */
+  --track: #f1f3f5;      /* progress track */
+  --strong: #18232b;     /* primary button / active nav bg */
+  --on-strong: #ffffff;  /* text on --strong */
+  --danger: #8a3048;
+  --danger-border: #e8a7b9;
+  --danger-soft: #fdedf3;
+  --rose-text: #88415c;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --grid-line: rgba(94, 173, 211, 0.035);
 }
 
+.dark {
+  --paper: #131b21;
+  --surface: #1b252c;
+  --card: #1f2a31;
+  --ink: #e8eef2;
+  --ink-soft: #cfd9e0;
+  --muted: #9dacb6;
+  --muted-soft: #84939e;
+  --line: #2c3b45;
+  --line-strong: #35454f;
+  --blue: #74bcdd;
+  --eyebrow: #8fcbea;
+  --blue-soft: #3c6070;
+  --blue-wash: #22323c;
+  --blue-wash-2: #294653;
+  --hover: #212e36;
+  --track: #2a3942;
+  --strong: #e8eef2;
+  --on-strong: #131b21;
+  --danger: #f2aabc;
+  --danger-border: #5c2b39;
+  --danger-soft: #382029;
+  --rose-text: #e79fb4;
+
+  --grid-line: rgba(120, 190, 220, 0.05);
+}
+
+/* Expose tokens as Tailwind v4 utilities (bg-*, text-*, border-*, ring-*). */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-muted-soft: var(--muted-soft);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-blue: var(--blue);
+  --color-eyebrow: var(--eyebrow);
+  --color-blue-soft: var(--blue-soft);
+  --color-blue-wash: var(--blue-wash);
+  --color-blue-wash-2: var(--blue-wash-2);
+  --color-hover: var(--hover);
+  --color-track: var(--track);
+  --color-strong: var(--strong);
+  --color-on-strong: var(--on-strong);
+  --color-danger: var(--danger);
+  --color-danger-border: var(--danger-border);
+  --color-danger-soft: var(--danger-soft);
+  --color-rose-text: var(--rose-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -46,13 +98,10 @@ html {
 body {
   min-height: 100vh;
   background:
-    linear-gradient(rgba(94, 173, 211, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(94, 173, 211, 0.035) 1px, transparent 1px),
-    linear-gradient(135deg, rgba(255, 217, 179, 0.16) 0%, transparent 34%),
-    linear-gradient(225deg, rgba(248, 199, 216, 0.13) 0%, transparent 32%),
-    linear-gradient(160deg, transparent 48%, rgba(191, 231, 207, 0.12) 100%),
-    linear-gradient(180deg, #fffdf3 0%, #f6fbfd 55%, #ffffff 100%);
-  background-size: 28px 28px, 28px 28px, auto, auto, auto;
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+    var(--background);
+  background-size: 28px 28px, 28px 28px, auto;
   color: var(--foreground);
   font-family: var(--font-geist-sans), Inter, ui-sans-serif, system-ui, sans-serif;
 }
@@ -85,18 +134,20 @@ svg {
 }
 
 .premium-card {
-  border: 1px solid rgba(216, 229, 236, 0.95);
+  border: 1px solid var(--line);
   border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9)),
-    var(--brand-paper);
+  background: var(--card);
   box-shadow: 0 14px 38px rgba(24, 35, 43, 0.055);
 }
 
+.dark .premium-card {
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.35);
+}
+
 .soft-panel {
-  border: 1px solid rgba(216, 229, 236, 0.9);
+  border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(251, 250, 242, 0.72);
+  background: var(--surface);
 }
 
 .focus-ring {
@@ -106,7 +157,7 @@ svg {
 
 .premium-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #b8cad4 transparent;
+  scrollbar-color: var(--line-strong) transparent;
 }
 
 .premium-scrollbar::-webkit-scrollbar {
@@ -119,21 +170,21 @@ svg {
 }
 
 .premium-scrollbar::-webkit-scrollbar-thumb {
-  background: #b8cad4;
+  background: var(--line-strong);
   border: 3px solid transparent;
   border-radius: 999px;
   background-clip: padding-box;
 }
 
 .premium-calendar {
-  --fc-border-color: #d8e5ec;
+  --fc-border-color: var(--line);
   --fc-page-bg-color: transparent;
-  --fc-neutral-bg-color: #fbfaf2;
-  --fc-today-bg-color: rgba(159, 216, 243, 0.22);
+  --fc-neutral-bg-color: var(--surface);
+  --fc-today-bg-color: var(--blue-wash);
   --fc-event-border-color: transparent;
-  --fc-event-text-color: #18232B;
+  --fc-event-text-color: var(--ink);
   --fc-small-font-size: 0.78rem;
-  color: #18232B;
+  color: var(--ink);
 }
 
 .premium-calendar .fc {
@@ -146,10 +197,10 @@ svg {
 }
 
 .premium-calendar .fc-button {
-  border: 1px solid #d8e5ec !important;
+  border: 1px solid var(--line) !important;
   border-radius: 8px !important;
-  background: #ffffff !important;
-  color: #18232B !important;
+  background: var(--card) !important;
+  color: var(--ink) !important;
   box-shadow: none !important;
   font-weight: 650 !important;
   padding: 0.45rem 0.7rem !important;
@@ -157,18 +208,18 @@ svg {
 
 .premium-calendar .fc-button:hover,
 .premium-calendar .fc-button-active {
-  background: #e7f5fa !important;
-  border-color: #9fd8f3 !important;
+  background: var(--blue-wash) !important;
+  border-color: var(--blue-soft) !important;
 }
 
 .premium-calendar .fc-scrollgrid,
 .premium-calendar .fc-theme-standard td,
 .premium-calendar .fc-theme-standard th {
-  border-color: #d8e5ec;
+  border-color: var(--line);
 }
 
 .premium-calendar .fc-col-header-cell {
-  background: #fbfaf2;
+  background: var(--surface);
   font-size: 0.76rem;
   font-weight: 720;
   padding: 0.55rem 0;
@@ -176,7 +227,7 @@ svg {
 }
 
 .premium-calendar .fc-daygrid-day-number {
-  color: #596a76;
+  color: var(--muted);
   font-size: 0.78rem;
   padding: 0.5rem;
 }

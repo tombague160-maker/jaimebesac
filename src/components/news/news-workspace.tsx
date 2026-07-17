@@ -208,11 +208,11 @@ export function NewsWorkspace() {
       <Card>
         <CardContent className="flex flex-col justify-between gap-4 p-5 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-black uppercase text-[#5EADD3]">Veille editoriale</p>
-            <h1 className="mt-1 text-2xl font-black text-[#18232B] sm:text-3xl">
+            <p className="text-xs font-black uppercase text-eyebrow">Veille editoriale</p>
+            <h1 className="mt-1 text-2xl font-black text-ink sm:text-3xl">
               Actualites Besancon a transformer en sujets.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#596A76]">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
               Sources fiables, scores d&apos;interet, angles suggeres et actions vers idees, planning ou publications.
             </p>
           </div>
@@ -239,7 +239,7 @@ export function NewsWorkspace() {
       <Card>
         <CardContent className="grid gap-3 p-4 xl:grid-cols-[1fr_190px_220px_190px_150px]">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#596A76]" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <TextInput
               className="pl-9"
               placeholder="Rechercher titre, source, tag..."
@@ -280,7 +280,7 @@ export function NewsWorkspace() {
         </CardContent>
       </Card>
 
-      <p className="text-sm font-bold text-[#596A76]">
+      <p className="text-sm font-bold text-muted">
         {isLoading ? "Chargement de la veille persistante..." : notice}
       </p>
 
@@ -303,11 +303,11 @@ export function NewsWorkspace() {
           </CardHeader>
           <CardContent className="space-y-3">
             {sources.map((item) => (
-              <div key={item.id} className="rounded-lg border border-[#D8E5EC] bg-white p-3">
+              <div key={item.id} className="rounded-lg border border-line bg-card p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-black text-[#18232B]">{item.name}</p>
-                    <p className="mt-1 text-xs font-bold text-[#596A76]">{item.type}</p>
+                    <p className="font-black text-ink">{item.name}</p>
+                    <p className="mt-1 text-xs font-bold text-muted">{item.type}</p>
                   </div>
                   <span
                     className="rounded-full px-2.5 py-1 text-xs font-black"
@@ -316,7 +316,7 @@ export function NewsWorkspace() {
                     {item.reliabilityScore}
                   </span>
                 </div>
-                <p className="mt-2 text-sm text-[#596A76]">{item.category}</p>
+                <p className="mt-2 text-sm text-muted">{item.category}</p>
               </div>
             ))}
           </CardContent>
@@ -443,25 +443,25 @@ function NewsCard({
       <button className="w-full p-4 text-left" onClick={onOpen}>
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="font-black text-[#18232B]">{item.title}</p>
-            <p className="mt-1 text-xs font-bold text-[#596A76]">
+            <p className="font-black text-ink">{item.title}</p>
+            <p className="mt-1 text-xs font-bold text-muted">
               {item.sourceName} - {formatNewsDate(item.publishedAt)}
             </p>
           </div>
-          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-[#E7F5FA] text-lg font-black text-[#18232B]">
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-blue-wash text-lg font-black text-ink">
             {item.importanceScore}
           </div>
         </div>
-        <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#596A76]">{item.summary}</p>
+        <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted">{item.summary}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Badge config={newsStatusConfig[item.status]} />
           <Badge config={priorityConfig[item.urgencyLevel]} />
-          <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+          <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
             {item.category}
           </span>
         </div>
       </button>
-      <div className="grid grid-cols-2 gap-2 border-t border-[#D8E5EC] p-3">
+      <div className="grid grid-cols-2 gap-2 border-t border-line p-3">
         <Button variant="secondary" size="sm" onClick={onMarkInteresting}>
           <Star className="h-3.5 w-3.5" />
           Interessant
@@ -493,10 +493,10 @@ function NewsDetail({
       <div className="flex flex-wrap gap-2">
         <Badge config={newsStatusConfig[item.status]} />
         <Badge config={priorityConfig[item.urgencyLevel]} />
-        <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+        <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
           {item.category}
         </span>
-        <span className="rounded-full bg-[#E7F5FA] px-2.5 py-1 text-xs font-black text-[#18232B]">
+        <span className="rounded-full bg-blue-wash px-2.5 py-1 text-xs font-black text-ink">
           Score {item.importanceScore}
         </span>
       </div>
@@ -510,7 +510,7 @@ function NewsDetail({
           href={item.originalUrl}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex min-h-10 max-w-full items-center gap-2 break-all rounded-lg border border-[#D8E5EC] bg-white px-3 py-2 text-sm font-bold text-[#18232B] transition hover:border-[#9FD8F3]"
+          className="inline-flex min-h-10 max-w-full items-center gap-2 break-all rounded-lg border border-line bg-card px-3 py-2 text-sm font-bold text-ink transition hover:border-blue-soft"
         >
           <ExternalLink className="h-4 w-4" />
           Ouvrir la source

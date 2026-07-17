@@ -88,11 +88,11 @@ export function StatisticsWorkspace() {
       <Card>
         <CardContent className="flex flex-col justify-between gap-4 p-5 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-black uppercase text-[#5EADD3]">Statistiques</p>
-            <h1 className="mt-1 text-2xl font-black text-[#18232B] sm:text-3xl">
+            <p className="text-xs font-black uppercase text-eyebrow">Statistiques</p>
+            <h1 className="mt-1 text-2xl font-black text-ink sm:text-3xl">
               Vision claire de l&apos;activité média et commerciale.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#596A76]">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
               Tournages, publications, relances, chiffre d&apos;affaires, plateformes et veille éditoriale.
             </p>
           </div>
@@ -200,10 +200,10 @@ export function StatisticsWorkspace() {
             {serviceDistribution.map((item, index) => (
               <div key={item.name}>
                 <div className="flex justify-between text-sm font-bold">
-                  <span className="text-[#18232B]">{item.name}</span>
-                  <span className="text-[#596A76]">{item.value}%</span>
+                  <span className="text-ink">{item.name}</span>
+                  <span className="text-muted">{item.value}%</span>
                 </div>
-                <div className="mt-2 h-2 rounded-full bg-[#F1F3F5]">
+                <div className="mt-2 h-2 rounded-full bg-track">
                   <div className="h-2 rounded-full" style={{ width: `${item.value}%`, backgroundColor: chartPalette[index % chartPalette.length] }} />
                 </div>
               </div>
@@ -259,7 +259,7 @@ export function StatisticsWorkspace() {
 
 function ChartPlaceholder() {
   return (
-    <div className="grid h-full place-items-center rounded-lg border border-dashed border-[#C8D9E2] bg-[#FBFAF2] text-sm font-bold text-[#8697A2]">
+    <div className="grid h-full place-items-center rounded-lg border border-dashed border-line-strong bg-surface text-sm font-bold text-muted-soft">
       Chargement du graphique
     </div>
   );
@@ -267,9 +267,9 @@ function ChartPlaceholder() {
 
 function Insight({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between rounded-lg bg-[#FBFAF2] p-3">
-      <p className="text-sm font-bold text-[#596A76]">{label}</p>
-      <p className="text-lg font-black text-[#18232B]">{value}</p>
+    <div className="flex items-center justify-between rounded-lg bg-surface p-3">
+      <p className="text-sm font-bold text-muted">{label}</p>
+      <p className="text-lg font-black text-ink">{value}</p>
     </div>
   );
 }
