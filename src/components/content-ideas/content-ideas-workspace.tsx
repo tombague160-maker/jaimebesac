@@ -14,6 +14,8 @@ import { addDaysIso, todayIso } from "@/lib/dates";
 import { getCalendarEventColor } from "@/lib/theme";
 import { formatDate, getClientName } from "@/lib/utils";
 import type { CalendarEvent, ContentFormat, ContentIdea, ContentIdeaStatus, Priority, Publication, PublicationPlatform, Shooting } from "@/types";
+import { Metric } from "@/components/ui/metric";
+import { InfoRow } from "@/components/ui/info-row";
 
 const formats: ContentFormat[] = [
   "Reel Instagram",
@@ -178,10 +180,10 @@ export function ContentIdeasWorkspace() {
       </Card>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="Idées actives" value={String(ideas.filter((idea) => idea.status !== "abandoned").length)} />
-        <Metric label="À valider" value={String(ideas.filter((idea) => idea.status === "to_validate").length)} />
-        <Metric label="Planifiées" value={String(ideas.filter((idea) => idea.status === "planned").length)} />
-        <Metric label="En production" value={String(ideas.filter((idea) => idea.status === "in_production").length)} />
+        <Metric icon={Lightbulb} label="Idées actives" value={String(ideas.filter((idea) => idea.status !== "abandoned").length)} />
+        <Metric icon={Lightbulb} label="À valider" value={String(ideas.filter((idea) => idea.status === "to_validate").length)} />
+        <Metric icon={Lightbulb} label="Planifiées" value={String(ideas.filter((idea) => idea.status === "planned").length)} />
+        <Metric icon={Lightbulb} label="En production" value={String(ideas.filter((idea) => idea.status === "in_production").length)} />
       </section>
 
       <Card>
@@ -334,19 +336,6 @@ export function ContentIdeasWorkspace() {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold text-[#596A76]">{label}</p>
-          <p className="mt-2 text-2xl font-black text-[#18232B]">{value}</p>
-        </div>
-        <Lightbulb className="h-5 w-5 text-[#5EADD3]" />
-      </CardContent>
-    </Card>
-  );
-}
 
 function IdeaCard({
   idea,
@@ -416,13 +405,13 @@ function IdeaDetail({
         <Badge config={priorityConfig[idea.priority]} />
         <Badge config={platformConfig[idea.recommendedPlatform]} />
       </div>
-      <Info label="Description" value={idea.description} />
-      <Info label="Source d'inspiration" value={newsTitle ?? idea.sourceType} />
-      <Info label="Client potentiel" value={clientName} />
-      <Info label="Format recommandé" value={idea.recommendedFormat} />
-      <Info label="Plateforme recommandée" value={idea.recommendedPlatform} />
-      <Info label="Date cible" value={formatDate(idea.targetDate)} />
-      <Info label="Notes" value={idea.notes || "Aucune note"} />
+      <InfoRow label="Description" value={idea.description} />
+      <InfoRow label="Source d'inspiration" value={newsTitle ?? idea.sourceType} />
+      <InfoRow label="Client potentiel" value={clientName} />
+      <InfoRow label="Format recommandé" value={idea.recommendedFormat} />
+      <InfoRow label="Plateforme recommandée" value={idea.recommendedPlatform} />
+      <InfoRow label="Date cible" value={formatDate(idea.targetDate)} />
+      <InfoRow label="Notes" value={idea.notes || "Aucune note"} />
       <div className="grid gap-2">
         <Button onClick={onCreateShooting}>
           <Clapperboard className="h-4 w-4" />
@@ -444,11 +433,3 @@ function IdeaDetail({
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
-      <p className="text-xs font-black uppercase text-[#596A76]">{label}</p>
-      <p className="mt-1 text-sm font-bold leading-6 text-[#18232B]">{value}</p>
-    </div>
-  );
-}

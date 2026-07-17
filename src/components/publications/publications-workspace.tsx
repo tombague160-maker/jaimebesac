@@ -11,8 +11,11 @@ import { Modal } from "@/components/ui/modal";
 import { useWorkspace, useWorkspaceValue } from "@/components/workspace-provider";
 import { platformConfig, publicationStatusConfig } from "@/lib/constants";
 import { addDaysIso, todayIso, weekDaysIso } from "@/lib/dates";
-import { cn, formatDate, getClientName } from "@/lib/utils";
+import { formatDate, getClientName } from "@/lib/utils";
 import type { Publication, PublicationPlatform, PublicationStatus } from "@/types";
+import { Metric } from "@/components/ui/metric";
+import { InfoRow } from "@/components/ui/info-row";
+import { ViewToggle } from "@/components/ui/view-toggle";
 
 const publicationStatuses: PublicationStatus[] = [
   "idea",
@@ -117,10 +120,10 @@ export function PublicationsWorkspace() {
       </Card>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="Cette semaine" value={String(publications.filter((item) => weekDays.includes(item.date)).length)} />
-        <Metric label="En validation" value={String(publications.filter((item) => item.status === "waiting_client_validation").length)} />
-        <Metric label="Programmées" value={String(publications.filter((item) => item.status === "scheduled").length)} />
-        <Metric label="Publiées" value={String(publications.filter((item) => item.status === "published").length)} />
+        <Metric icon={FileText} label="Cette semaine" value={String(publications.filter((item) => weekDays.includes(item.date)).length)} />
+        <Metric icon={FileText} label="En validation" value={String(publications.filter((item) => item.status === "waiting_client_validation").length)} />
+        <Metric icon={FileText} label="Programmées" value={String(publications.filter((item) => item.status === "scheduled").length)} />
+        <Metric icon={FileText} label="Publiées" value={String(publications.filter((item) => item.status === "published").length)} />
       </section>
 
       <Card>
@@ -165,9 +168,9 @@ export function PublicationsWorkspace() {
             ))}
           </Select>
           <div className="flex gap-2">
-            <ViewButton active={view === "calendar"} onClick={() => setView("calendar")} icon={CalendarDays} label="Calendrier" />
-            <ViewButton active={view === "kanban"} onClick={() => setView("kanban")} icon={LayoutGrid} label="Kanban" />
-            <ViewButton active={view === "list"} onClick={() => setView("list")} icon={Table2} label="Liste" />
+            <ViewToggle active={view === "calendar"} onClick={() => setView("calendar")} icon={CalendarDays} label="Calendrier" />
+            <ViewToggle active={view === "kanban"} onClick={() => setView("kanban")} icon={LayoutGrid} label="Kanban" />
+            <ViewToggle active={view === "list"} onClick={() => setView("list")} icon={Table2} label="Liste" />
           </div>
         </CardContent>
       </Card>
@@ -380,46 +383,7 @@ export function PublicationsWorkspace() {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <Card>
-      <CardContent className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold text-[#596A76]">{label}</p>
-          <p className="mt-2 text-2xl font-black text-[#18232B]">{value}</p>
-        </div>
-        <FileText className="h-5 w-5 text-[#5EADD3]" />
-      </CardContent>
-    </Card>
-  );
-}
 
-function ViewButton({
-  active,
-  onClick,
-  icon: Icon,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: typeof CalendarDays;
-  label: string;
-}) {
-  return (
-    <button
-      className={cn(
-        "inline-flex h-10 items-center gap-2 rounded-lg border px-3 text-sm font-bold transition",
-        active
-          ? "border-[#9FD8F3] bg-[#E7F5FA] text-[#18232B]"
-          : "border-[#D8E5EC] bg-white text-[#596A76] hover:text-[#18232B]",
-      )}
-      onClick={onClick}
-    >
-      <Icon className="h-4 w-4" />
-      <span className="hidden sm:inline">{label}</span>
-    </button>
-  );
-}
 
 function PublicationMiniCard({
   publication,
@@ -470,13 +434,13 @@ function PublicationDetail({
           Validation : {publication.clientValidationStatus}
         </span>
       </div>
-      <Info label="Client" value={clientName} />
-      <Info label="Tournage associé" value={shootingTitle} />
-      <Info label="Date de publication" value={`${formatDate(publication.date)} · ${publication.time}`} />
-      <Info label="Texte de publication" value={publication.caption || "À rédiger"} />
-      <Info label="Hashtags" value={publication.hashtags.join(" ")} />
-      <Info label="Média" value={publication.mediaUrl} />
-      <Info label="Notes internes" value={publication.notes || "Aucune note"} />
+      <InfoRow label="Client" value={clientName} />
+      <InfoRow label="Tournage associé" value={shootingTitle} />
+      <InfoRow label="Date de publication" value={`${formatDate(publication.date)} · ${publication.time}`} />
+      <InfoRow label="Texte de publication" value={publication.caption || "À rédiger"} />
+      <InfoRow label="Hashtags" value={publication.hashtags.join(" ")} />
+      <InfoRow label="Média" value={publication.mediaUrl} />
+      <InfoRow label="Notes internes" value={publication.notes || "Aucune note"} />
       <div className="grid gap-2">
         <Button onClick={() => onStatus("approved", "Publication validée et sauvegardée.")}>
           <CheckCircle2 className="h-4 w-4" />
@@ -498,11 +462,3 @@ function PublicationDetail({
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-[#D8E5EC] bg-white p-3">
-      <p className="text-xs font-black uppercase text-[#596A76]">{label}</p>
-      <p className="mt-1 text-sm font-bold leading-6 text-[#18232B]">{value}</p>
-    </div>
-  );
-}
