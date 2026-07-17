@@ -52,20 +52,20 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center bg-[#FFFDF3] p-4">
-      <div className="w-full max-w-sm rounded-lg border border-[#D8E5EC] bg-white p-6 shadow-[0_24px_80px_rgba(24,35,43,0.12)]">
+    <div className="grid min-h-screen place-items-center bg-paper p-4">
+      <div className="w-full max-w-sm rounded-lg border border-line bg-card p-6 shadow-[0_24px_80px_rgba(24,35,43,0.12)]">
         <div className="mb-5 flex items-center gap-3">
-          <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg border-2 border-[#18232B] bg-white">
+          <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg border-2 border-strong bg-card">
             <Image src="/logo-jaime-besac.jpeg" alt="Logo J'aime Besac" fill sizes="80px" className="object-cover" priority />
           </div>
           <div>
-            <p className="text-sm font-black text-[#18232B]">J&apos;aime Besac</p>
-            <p className="text-xs font-bold text-[#596A76]">Espace privé</p>
+            <p className="text-sm font-black text-ink">J&apos;aime Besac</p>
+            <p className="text-xs font-bold text-muted">Espace privé</p>
           </div>
         </div>
 
-        <h1 className="text-lg font-black text-[#18232B]">Connexion</h1>
-        <p className="mt-1 text-sm text-[#596A76]">Accès réservé. Identifie-toi pour continuer.</p>
+        <h1 className="text-lg font-black text-ink">Connexion</h1>
+        <p className="mt-1 text-sm text-muted">Accès réservé. Identifie-toi pour continuer.</p>
 
         <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-2">
@@ -95,7 +95,7 @@ export default function LoginPage() {
           </div>
 
           {error ? (
-            <p className="rounded-lg border border-[#E8A7B9] bg-[#FDEDF3] px-3 py-2 text-sm font-bold text-[#8A3048]">
+            <p className="rounded-lg border border-danger-border bg-danger-soft px-3 py-2 text-sm font-bold text-danger">
               {error}
             </p>
           ) : null}

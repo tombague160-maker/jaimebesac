@@ -164,11 +164,11 @@ export function ContentIdeasWorkspace() {
       <Card>
         <CardContent className="flex flex-col justify-between gap-4 p-5 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-black uppercase text-[#5EADD3]">Idées de contenus</p>
-            <h1 className="mt-1 text-2xl font-black text-[#18232B] sm:text-3xl">
+            <p className="text-xs font-black uppercase text-eyebrow">Idées de contenus</p>
+            <h1 className="mt-1 text-2xl font-black text-ink sm:text-3xl">
               Transformer la veille et les opportunités client.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#596A76]">
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
               Chaque idée garde sa source, son format recommandé, sa plateforme cible et sa prochaine action.
             </p>
           </div>
@@ -189,7 +189,7 @@ export function ContentIdeasWorkspace() {
       <Card>
         <CardContent className="grid gap-3 p-4 lg:grid-cols-[1fr_220px_180px]">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#596A76]" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <TextInput
               className="pl-9"
               value={query}
@@ -216,7 +216,7 @@ export function ContentIdeasWorkspace() {
         </CardContent>
       </Card>
 
-      <p className="text-sm font-bold text-[#596A76]">{notice}</p>
+      <p className="text-sm font-bold text-muted">{notice}</p>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {filteredIdeas.map((idea) => (
@@ -355,21 +355,21 @@ function IdeaCard({
       <button className="w-full p-4 text-left" onClick={onOpen}>
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="font-black text-[#18232B]">{idea.title}</p>
-            <p className="mt-1 text-sm text-[#596A76]">{clientName}</p>
+            <p className="font-black text-ink">{idea.title}</p>
+            <p className="mt-1 text-sm text-muted">{clientName}</p>
           </div>
           <Badge config={priorityConfig[idea.priority]} />
         </div>
-        <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#596A76]">{idea.description}</p>
+        <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted">{idea.description}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Badge config={contentIdeaStatusConfig[idea.status]} />
           <Badge config={platformConfig[idea.recommendedPlatform]} />
-          <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+          <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
             {idea.recommendedFormat}
           </span>
         </div>
       </button>
-      <div className="grid grid-cols-2 gap-2 border-t border-[#D8E5EC] p-3">
+      <div className="grid grid-cols-2 gap-2 border-t border-line p-3">
         <Button variant="secondary" size="sm" onClick={onValidate}>
           Valider
         </Button>

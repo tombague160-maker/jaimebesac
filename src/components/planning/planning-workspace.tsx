@@ -92,11 +92,11 @@ export function PlanningWorkspace() {
         <CardContent className="p-5">
           <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
             <div>
-              <p className="text-xs font-black uppercase text-[#5EADD3]">Planning interactif</p>
-              <h1 className="mt-1 text-2xl font-black text-[#18232B] sm:text-3xl">
+              <p className="text-xs font-black uppercase text-eyebrow">Planning interactif</p>
+              <h1 className="mt-1 text-2xl font-black text-ink sm:text-3xl">
                 Production, rendez-vous, publications et relances.
               </h1>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-[#596A76]">
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
                 Vue mois, semaine, jour et liste avec filtres métier, panneau latéral et édition locale.
               </p>
             </div>
@@ -116,7 +116,7 @@ export function PlanningWorkspace() {
       <Card>
         <CardContent className="grid gap-3 p-4 lg:grid-cols-[1fr_190px_220px]">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#596A76]" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <TextInput
               className="pl-9"
               value={query}
@@ -178,19 +178,19 @@ export function PlanningWorkspace() {
                 className={cn(
                   "w-full rounded-lg border p-3 text-left transition",
                   selectedId === event.id
-                    ? "border-[#5EADD3] bg-[#E7F5FA]"
-                    : "border-[#D8E5EC] bg-white hover:border-[#9FD8F3] hover:bg-[#F4FBFD]",
+                    ? "border-blue bg-blue-wash"
+                    : "border-line bg-card hover:border-blue-soft hover:bg-hover",
                 )}
                 onClick={() => setSelectedId(event.id)}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <p className="font-black text-[#18232B]">{event.title}</p>
+                  <p className="font-black text-ink">{event.title}</p>
                   <Badge config={eventTypeConfig[event.type]} />
                 </div>
-                <p className="mt-2 text-sm text-[#596A76]">
+                <p className="mt-2 text-sm text-muted">
                   {formatDate(event.date)} · {formatTimeRange(event.startTime, event.endTime)}
                 </p>
-                <p className="mt-1 text-xs font-bold text-[#596A76]">{getClientName(event.clientId, clients)}</p>
+                <p className="mt-1 text-xs font-bold text-muted">{getClientName(event.clientId, clients)}</p>
               </button>
             ))}
           </CardContent>
@@ -208,13 +208,13 @@ export function PlanningWorkspace() {
             <div className="flex flex-wrap gap-2">
               <Badge config={eventTypeConfig[selectedEvent.type]} />
               <Badge config={priorityConfig[selectedEvent.priority]} />
-              <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+              <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
                 {formatTimeRange(selectedEvent.startTime, selectedEvent.endTime)}
               </span>
             </div>
-            <div className="rounded-lg bg-[#FBFAF2] p-4">
-              <p className="text-xs font-black uppercase text-[#596A76]">Description</p>
-              <p className="mt-2 text-sm leading-6 text-[#18232B]">{selectedEvent.description}</p>
+            <div className="rounded-lg bg-surface p-4">
+              <p className="text-xs font-black uppercase text-muted">Description</p>
+              <p className="mt-2 text-sm leading-6 text-ink">{selectedEvent.description}</p>
             </div>
             <div className="grid gap-3 text-sm">
               <InfoRow label="Client" value={getClientName(selectedEvent.clientId, clients)} />

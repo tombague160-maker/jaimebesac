@@ -17,7 +17,7 @@ export function CardHeader({
   className?: string;
   children: React.ReactNode;
 }) {
-  return <div className={cn("min-w-0 border-b border-[#D8E5EC] p-4", className)}>{children}</div>;
+  return <div className={cn("min-w-0 border-b border-line p-4", className)}>{children}</div>;
 }
 
 export function CardContent({

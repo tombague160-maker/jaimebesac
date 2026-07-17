@@ -18,8 +18,8 @@ export function ViewToggle({
       className={cn(
         "inline-flex h-10 items-center gap-2 rounded-lg border px-3 text-sm font-bold transition",
         active
-          ? "border-[#9FD8F3] bg-[#E7F5FA] text-[#18232B]"
-          : "border-[#D8E5EC] bg-white text-[#596A76] hover:text-[#18232B]",
+          ? "border-blue-soft bg-blue-wash text-ink"
+          : "border-line bg-card text-muted hover:text-ink",
       )}
       onClick={onClick}
     >

@@ -118,14 +118,14 @@ export function DashboardOverview() {
           <CardContent className="p-5 sm:p-6">
             <div className="flex flex-col gap-6">
               <div className="max-w-3xl">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#9FD8F3] bg-[#E7F5FA] px-3 py-1 text-xs font-black text-[#18232B]">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-soft bg-blue-wash px-3 py-1 text-xs font-black text-ink">
                   <TrendingUp className="h-3.5 w-3.5" />
                   Studio opérationnel · activité du jour
                 </div>
-                <h1 className="text-3xl font-black text-[#18232B] sm:text-4xl">
+                <h1 className="text-3xl font-black text-ink sm:text-4xl">
                   Piloter J&apos;aime Besac comme un média local premium.
                 </h1>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-[#596A76] sm:text-base">
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-muted sm:text-base">
                   Planning, tournages, publications, clients, relances et veille éditoriale réunis dans un
                   cockpit pensé pour décider vite et produire mieux.
                 </p>
@@ -140,7 +140,7 @@ export function DashboardOverview() {
                   <Link
                     key={label}
                     href={href}
-                    className="inline-flex min-h-10 min-w-0 items-center justify-start gap-2 rounded-lg border border-[#9FD8F3] bg-[#E7F5FA] px-3 py-2 text-sm font-semibold leading-5 text-[#18232B] transition hover:bg-[#D7EDF7]"
+                    className="inline-flex min-h-10 min-w-0 items-center justify-start gap-2 rounded-lg border border-blue-soft bg-blue-wash px-3 py-2 text-sm font-semibold leading-5 text-ink transition hover:bg-blue-wash-2"
                   >
                     <Plus className="h-4 w-4" />
                     {label}
@@ -152,16 +152,16 @@ export function DashboardOverview() {
         </Card>
         <Card>
           <CardHeader>
-            <p className="text-sm font-black text-[#18232B]">Pipeline commercial rapide</p>
+            <p className="text-sm font-black text-ink">Pipeline commercial rapide</p>
           </CardHeader>
           <CardContent className="space-y-3">
             {["prospect", "proposal_sent", "active", "to_follow_up"].map((status) => {
               const config = clientStatusConfig[status as keyof typeof clientStatusConfig];
               const count = clients.filter((client) => client.status === status).length;
               return (
-                <div key={status} className="flex items-center justify-between rounded-lg bg-[#FBFAF2] p-3">
+                <div key={status} className="flex items-center justify-between rounded-lg bg-surface p-3">
                   <Badge config={config} />
-                  <span className="text-lg font-black text-[#18232B]">{count}</span>
+                  <span className="text-lg font-black text-ink">{count}</span>
                 </div>
               );
             })}
@@ -182,11 +182,11 @@ export function DashboardOverview() {
               <Card>
                 <CardContent className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-[#596A76]">{stat.label}</p>
-                    <p className="mt-2 text-3xl font-black text-[#18232B]">{stat.value}</p>
-                    <p className="mt-1 truncate text-xs font-semibold text-[#596A76]">{stat.helper}</p>
+                    <p className="text-xs font-bold text-muted">{stat.label}</p>
+                    <p className="mt-2 text-3xl font-black text-ink">{stat.value}</p>
+                    <p className="mt-1 truncate text-xs font-semibold text-muted">{stat.helper}</p>
                   </div>
-                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#E7F5FA] text-[#18232B]">
+                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-blue-wash text-ink">
                     <Icon className="h-5 w-5" />
                   </div>
                 </CardContent>
@@ -204,19 +204,19 @@ export function DashboardOverview() {
           <CardContent className="space-y-3">
             {todayEvents.length ? (
               todayEvents.map((event) => (
-                <div key={event.id} className="flex gap-3 rounded-lg border border-[#D8E5EC] bg-white p-3">
-                  <div className="w-16 shrink-0 text-sm font-black text-[#18232B]">{event.startTime}</div>
+                <div key={event.id} className="flex gap-3 rounded-lg border border-line bg-card p-3">
+                  <div className="w-16 shrink-0 text-sm font-black text-ink">{event.startTime}</div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-black text-[#18232B]">{event.title}</p>
+                      <p className="font-black text-ink">{event.title}</p>
                       <Badge config={eventTypeConfig[event.type]} />
                     </div>
-                    <p className="mt-1 text-sm text-[#596A76]">{event.location}</p>
+                    <p className="mt-1 text-sm text-muted">{event.location}</p>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="rounded-lg border border-dashed border-[#C8D9E2] bg-[#FBFAF2] p-6 text-center text-sm font-bold text-[#596A76]">
+              <div className="rounded-lg border border-dashed border-line-strong bg-surface p-6 text-center text-sm font-bold text-muted">
                 Aucun événement prévu aujourd&apos;hui.
               </div>
             )}
@@ -229,17 +229,17 @@ export function DashboardOverview() {
           </CardHeader>
           <CardContent className="space-y-3">
             {urgentReminders.length ? urgentReminders.map((reminder) => (
-              <div key={reminder.id} className="rounded-lg border border-[#D8E5EC] bg-white p-3">
+              <div key={reminder.id} className="rounded-lg border border-line bg-card p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-black text-[#18232B]">{reminder.title}</p>
-                    <p className="mt-1 text-sm text-[#596A76]">{getClientName(reminder.clientId, clients)}</p>
+                    <p className="font-black text-ink">{reminder.title}</p>
+                    <p className="mt-1 text-sm text-muted">{getClientName(reminder.clientId, clients)}</p>
                   </div>
                   <Badge config={reminderStatusConfig[reminder.status]} />
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Badge config={priorityConfig[reminder.priority]} />
-                  <span className="rounded-full bg-[#FBFAF2] px-2.5 py-1 text-xs font-bold text-[#596A76]">
+                  <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-bold text-muted">
                     {formatDate(reminder.dueDate)}
                   </span>
                 </div>
@@ -256,12 +256,12 @@ export function DashboardOverview() {
           </CardHeader>
           <CardContent className="space-y-3">
             {nextShootings.length ? nextShootings.map((shooting) => (
-              <div key={shooting.id} className="rounded-lg bg-[#FBFAF2] p-3">
+              <div key={shooting.id} className="rounded-lg bg-surface p-3">
                 <div className="flex items-start justify-between gap-3">
-                  <p className="font-black text-[#18232B]">{shooting.title}</p>
+                  <p className="font-black text-ink">{shooting.title}</p>
                   <Badge config={shootingStatusConfig[shooting.status]} />
                 </div>
-                <p className="mt-2 text-sm text-[#596A76]">
+                <p className="mt-2 text-sm text-muted">
                   {getClientName(shooting.clientId, clients)} · {formatDate(shooting.date)} · {shooting.startTime}
                 </p>
               </div>
@@ -275,14 +275,14 @@ export function DashboardOverview() {
           </CardHeader>
           <CardContent className="space-y-3">
             {upcomingPublications.length ? upcomingPublications.map((publication) => (
-              <div key={publication.id} className="rounded-lg bg-[#FBFAF2] p-3">
+              <div key={publication.id} className="rounded-lg bg-surface p-3">
                 <div className="flex items-start justify-between gap-3">
-                  <p className="font-black text-[#18232B]">{publication.title}</p>
+                  <p className="font-black text-ink">{publication.title}</p>
                   <Badge config={platformConfig[publication.platform]} />
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Badge config={publicationStatusConfig[publication.status]} />
-                  <span className="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-[#596A76]">
+                  <span className="rounded-full bg-card px-2.5 py-1 text-xs font-bold text-muted">
                     {formatDate(publication.date)} · {publication.time}
                   </span>
                 </div>
@@ -297,17 +297,17 @@ export function DashboardOverview() {
           </CardHeader>
           <CardContent className="space-y-3">
             {importantNews.length ? importantNews.map((item) => (
-              <div key={item.id} className="rounded-lg bg-[#FBFAF2] p-3">
+              <div key={item.id} className="rounded-lg bg-surface p-3">
                 <div className="flex items-start justify-between gap-3">
-                  <p className="font-black text-[#18232B]">{item.title}</p>
-                  <span className="rounded-full bg-white px-2.5 py-1 text-xs font-black text-[#18232B]">
+                  <p className="font-black text-ink">{item.title}</p>
+                  <span className="rounded-full bg-card px-2.5 py-1 text-xs font-black text-ink">
                     {item.importanceScore}
                   </span>
                 </div>
-                <p className="mt-2 line-clamp-2 text-sm text-[#596A76]">{item.summary}</p>
+                <p className="mt-2 line-clamp-2 text-sm text-muted">{item.summary}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Badge config={newsStatusConfig[item.status]} />
-                  <span className="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-[#596A76]">
+                  <span className="rounded-full bg-card px-2.5 py-1 text-xs font-bold text-muted">
                     {item.sourceName}
                   </span>
                 </div>
@@ -322,7 +322,7 @@ export function DashboardOverview() {
 
 function EmptyMessage({ children }: { children: React.ReactNode }) {
   return (
-    <p className="rounded-lg border border-dashed border-[#C8D9E2] bg-[#FBFAF2] p-5 text-center text-sm font-bold text-[#596A76]">
+    <p className="rounded-lg border border-dashed border-line-strong bg-surface p-5 text-center text-sm font-bold text-muted">
       {children}
     </p>
   );

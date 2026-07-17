@@ -25,10 +25,12 @@ aucun P0/P1 exploitable par un anonyme.** Corrigé par lots (S → A → D → R
 - A3 (reporté/faible) : les casts `form.get() as <Union>` sont alimentés par des `<Select>` aux options fixes → valeurs déjà contraintes en pratique ; la validation par élément est traitée au grain du `PUT` (Lot S) et le sera plus finement au Lot R.
 - A4 (fusionné dans R) : les sélecteurs/re-render ciblés relèvent de la refonte de persistance (Lot R).
 
-## Lot D — Design & UX *(à venir)*
-- D1 : tokeniser ~385 couleurs hex (21 fichiers) via `@theme` (Tailwind v4).
-- D2 : mode sombre. D3 : skeletons. D4 : états vides cohérents. D5 : contrastes AA.
-- D6 : réglage densité (brancher ou retirer). D7 : `font-black` maîtrisé, kanban unifié, cibles ≥44px, double `<h1>`.
+## Lot D — Design & UX *(partie 1 faite)*
+- D1 ✅ : **tokenisation** — système de tokens sémantiques dans `@theme` (Tailwind v4, `globals.css`), 367 classes `[#hex]` remplacées par des utilitaires (`text-ink`, `bg-card`, `border-line`…). Look clair **strictement identique** (vérifié Playwright).
+- D2 ✅ : **mode sombre** complet — surcharge des tokens sous `.dark`, bouton de bascule (`ui/theme-toggle.tsx`, `useSyncExternalStore`), script anti-flash dans `layout.tsx`, persistance localStorage + respect du système. Overlays/scrollbar/calendrier adaptés. Vérifié clair + sombre.
+- D5 ✅ (via tokens) : eyebrows → `--eyebrow` (#287CA8, AA) ; `muted-soft` remonté (#6B7A85).
+- D6 ✅ : réglage « densité » mort **retiré** (il était trompeur).
+- D3 (à venir) : skeletons de chargement. D4 (à venir) : `EmptyState` partagé sur les grilles principales. D7 (à venir) : `font-black` maîtrisé, kanban unifié, cibles ≥44px, double `<h1>`.
 
 ## Lot R — Refactor structurel *(à venir, différable)*
 - R1 : persistance/CRUD par entité (au lieu du document entier par module). R2 : rendu initial serveur.

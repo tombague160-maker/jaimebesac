@@ -27,6 +27,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Modal } from "@/components/ui/modal";
 import { Label, Select, TextArea, TextInput } from "@/components/ui/field";
 import { useWorkspace } from "@/components/workspace-provider";
@@ -294,8 +295,8 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen text-[#18232B]">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[280px] border-r border-[#D8E5EC] bg-[#FFFDF3]/92 backdrop-blur-xl lg:block">
+    <div className="min-h-screen text-ink">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[280px] border-r border-line bg-paper/92 backdrop-blur-xl lg:block">
         <SidebarContent
           pathname={pathname}
           urgentReminders={urgentReminders}
@@ -308,14 +309,14 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
           <motion.div className="fixed inset-0 z-50 lg:hidden">
             <motion.button
               aria-label="Fermer la navigation"
-              className="absolute inset-0 bg-[#18232B]/22 backdrop-blur-[2px]"
+              className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
             />
             <motion.aside
-              className="absolute inset-y-0 left-0 w-[300px] border-r border-[#D8E5EC] bg-[#FFFDF3]"
+              className="absolute inset-y-0 left-0 w-[300px] border-r border-line bg-paper"
               initial={{ x: -320 }}
               animate={{ x: 0 }}
               exit={{ x: -320 }}
@@ -336,7 +337,7 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
       </AnimatePresence>
 
       <main className="lg:pl-[280px]">
-        <header className="sticky top-0 z-20 border-b border-[#D8E5EC] bg-white/86 backdrop-blur-xl">
+        <header className="sticky top-0 z-20 border-b border-line bg-card/86 backdrop-blur-xl">
           <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
             <Button
               variant="ghost"
@@ -348,13 +349,13 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
               <Menu className="h-5 w-5" />
             </Button>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-[#596A76]">Aujourd&apos;hui · {currentDate.display}</p>
-              <h1 className="truncate text-base font-black text-[#18232B] sm:text-lg">
+              <p className="text-xs font-bold text-muted">Aujourd&apos;hui · {currentDate.display}</p>
+              <h1 className="truncate text-base font-black text-ink sm:text-lg">
                 {activeItem?.label ?? "Studio"}
               </h1>
             </div>
             <button
-              className="hidden h-10 min-w-[280px] items-center gap-2 rounded-lg border border-[#D8E5EC] bg-[#FBFAF2] px-3 text-left text-sm text-[#596A76] transition hover:border-[#9FD8F3] hover:bg-white md:flex"
+              className="hidden h-10 min-w-[280px] items-center gap-2 rounded-lg border border-line bg-surface px-3 text-left text-sm text-muted transition hover:border-blue-soft hover:bg-card md:flex"
               onClick={() => setSearchOpen(true)}
             >
               <Search className="h-4 w-4" />
@@ -363,6 +364,7 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
             <Button variant="secondary" size="icon" onClick={() => setSearchOpen(true)} aria-label="Rechercher">
               <Search className="h-4 w-4" />
             </Button>
+            <ThemeToggle />
             <Button onClick={() => setQuickOpen(true)}>
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Créer</span>
@@ -439,7 +441,7 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
               searchResults.map((item) => (
                 <button
                   key={`${item.type}-${item.id}`}
-                  className="flex w-full items-center justify-between gap-3 rounded-lg border border-[#D8E5EC] bg-white p-3 text-left transition hover:border-[#9FD8F3] hover:bg-[#F4FBFD]"
+                  className="flex w-full items-center justify-between gap-3 rounded-lg border border-line bg-card p-3 text-left transition hover:border-blue-soft hover:bg-hover"
                   onClick={() => {
                     router.push(item.href);
                     setSearchOpen(false);
@@ -447,18 +449,18 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
                   }}
                 >
                   <span className="min-w-0">
-                    <span className="block truncate text-sm font-black text-[#18232B]">{item.title}</span>
-                    <span className="mt-1 block truncate text-xs text-[#596A76]">
+                    <span className="block truncate text-sm font-black text-ink">{item.title}</span>
+                    <span className="mt-1 block truncate text-xs text-muted">
                       {item.type} · {item.meta}
                     </span>
                   </span>
-                  <ChevronRight className="h-4 w-4 shrink-0 text-[#596A76]" />
+                  <ChevronRight className="h-4 w-4 shrink-0 text-muted" />
                 </button>
               ))
             ) : (
-              <div className="rounded-lg border border-dashed border-[#C8D9E2] bg-[#FBFAF2] p-8 text-center">
-                <Sparkles className="mx-auto h-6 w-6 text-[#5EADD3]" />
-                <p className="mt-3 text-sm font-bold text-[#18232B]">
+              <div className="rounded-lg border border-dashed border-line-strong bg-surface p-8 text-center">
+                <Sparkles className="mx-auto h-6 w-6 text-blue" />
+                <p className="mt-3 text-sm font-bold text-ink">
                   {searchQuery ? "Aucun résultat trouvé" : "Recherche instantanée prête"}
                 </p>
               </div>
@@ -470,7 +472,7 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
       <AnimatePresence>
         {toast ? (
           <motion.div
-            className="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-lg border border-[#9FD8F3] bg-white px-4 py-3 text-sm font-bold text-[#18232B] shadow-[0_18px_48px_rgba(24,35,43,0.18)]"
+            className="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-lg border border-blue-soft bg-card px-4 py-3 text-sm font-bold text-ink shadow-[0_18px_48px_rgba(24,35,43,0.18)]"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 16 }}
@@ -482,7 +484,7 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
       </AnimatePresence>
 
       {saveStatus === "error" ? (
-        <div className="fixed bottom-5 left-1/2 z-50 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg border border-[#E8A7B9] bg-white px-4 py-3 text-sm font-bold text-[#8A3048] shadow-lg">
+        <div className="fixed bottom-5 left-1/2 z-50 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg border border-danger-border bg-card px-4 py-3 text-sm font-bold text-danger shadow-lg">
           {error ?? "La sauvegarde est momentanément indisponible."}
         </div>
       ) : null}
@@ -509,7 +511,7 @@ function SidebarContent({
     <div className="flex h-full flex-col p-4">
       <div className="mb-6 flex items-center justify-between gap-3 px-1">
         <Link href="/dashboard" className="flex min-w-0 items-center gap-3" onClick={onNavigate}>
-          <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg border-2 border-[#18232B] bg-white shadow-[0_12px_28px_rgba(24,35,43,0.16)]">
+          <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg border-2 border-strong bg-card shadow-[0_12px_28px_rgba(24,35,43,0.16)]">
             <Image
               src="/logo-jaime-besac.jpeg"
               alt="Logo J'aime Besac"
@@ -520,8 +522,8 @@ function SidebarContent({
             />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-black text-[#18232B]">J&apos;aime Besac</p>
-            <p className="truncate text-xs font-bold text-[#596A76]">Infos & good mood</p>
+            <p className="truncate text-sm font-black text-ink">J&apos;aime Besac</p>
+            <p className="truncate text-xs font-bold text-muted">Infos & good mood</p>
           </div>
         </Link>
         <Button variant="ghost" size="icon" className="lg:hidden" onClick={onNavigate} aria-label="Fermer">
@@ -546,43 +548,43 @@ function SidebarContent({
               className={[
                 "group flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-bold transition",
                 active
-                  ? "border border-[#18232B] bg-[#9FD8F3] text-[#18232B] shadow-[3px_3px_0_rgba(24,35,43,0.16)]"
-                  : "text-[#596A76] hover:bg-[#FBFAF2] hover:text-[#18232B]",
+                  ? "border border-strong bg-blue-soft text-ink shadow-[3px_3px_0_rgba(24,35,43,0.16)]"
+                  : "text-muted hover:bg-surface hover:text-ink",
               ].join(" ")}
             >
               <Icon className="h-4 w-4 shrink-0" />
               <span className="min-w-0 flex-1 truncate">{item.label}</span>
-              {active ? <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#18232B]" /> : null}
+              {active ? <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-strong" /> : null}
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-5 rounded-lg border border-[#D8E5EC] bg-[#FBFAF2] p-3">
+      <div className="mt-5 rounded-lg border border-line bg-surface p-3">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <p className="text-xs font-black uppercase text-[#596A76]">Relances critiques</p>
-            <p className="mt-1 text-2xl font-black text-[#18232B]">{urgentReminders}</p>
+            <p className="text-xs font-black uppercase text-muted">Relances critiques</p>
+            <p className="mt-1 text-2xl font-black text-ink">{urgentReminders}</p>
           </div>
           <Bell className="h-5 w-5" style={{ color: pastelColors.roseText }} />
         </div>
         <Link
           href="/reminders"
           onClick={onNavigate}
-          className="mt-3 inline-flex items-center gap-1 text-xs font-black text-[#18232B]"
+          className="mt-3 inline-flex items-center gap-1 text-xs font-black text-ink"
         >
           Ouvrir les priorités
           <ChevronRight className="h-3.5 w-3.5" />
         </Link>
       </div>
 
-      <div className="mt-3 flex items-center gap-3 rounded-lg border border-[#D8E5EC] bg-white p-3">
-        <div className="grid h-9 w-9 place-items-center rounded-lg bg-[#E7F5FA] text-xs font-black text-[#18232B]">
+      <div className="mt-3 flex items-center gap-3 rounded-lg border border-line bg-card p-3">
+        <div className="grid h-9 w-9 place-items-center rounded-lg bg-blue-wash text-xs font-black text-ink">
           {avatar}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-black text-[#18232B]">{userName}</p>
-          <p className="truncate text-xs text-[#596A76]">Pilotage éditorial</p>
+          <p className="truncate text-sm font-black text-ink">{userName}</p>
+          <p className="truncate text-xs text-muted">Pilotage éditorial</p>
         </div>
         <Button
           variant="ghost"
