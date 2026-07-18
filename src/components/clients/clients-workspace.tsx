@@ -191,9 +191,9 @@ export function ClientsWorkspace() {
       ) : null}
 
       {view === "pipeline" ? (
-        <section className="premium-scrollbar grid gap-3 overflow-x-auto pb-2 xl:grid-cols-5">
-          {clientStages.slice(0, 5).map((stage) => (
-            <Card key={stage} className="min-w-[260px]">
+        <section className="premium-scrollbar flex gap-3 overflow-x-auto pb-2">
+          {clientStages.map((stage) => (
+            <Card key={stage} className="w-[260px] shrink-0">
               <CardHeader>
                 <div className="flex items-center justify-between gap-2">
                   <Badge config={clientStatusConfig[stage]} />
@@ -238,7 +238,19 @@ export function ClientsWorkspace() {
               </thead>
               <tbody className="divide-y divide-[#D8E5EC] bg-card">
                 {filteredClients.map((client) => (
-                  <tr key={client.id} className="cursor-pointer hover:bg-hover" onClick={() => setSelectedId(client.id)}>
+                  <tr
+                    key={client.id}
+                    role="button"
+                    tabIndex={0}
+                    className="cursor-pointer hover:bg-hover focus:bg-hover focus:outline-none"
+                    onClick={() => setSelectedId(client.id)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setSelectedId(client.id);
+                      }
+                    }}
+                  >
                     <td className="px-4 py-3 font-black text-ink">{client.name}</td>
                     <td className="px-4 py-3 text-muted">{client.contactName}</td>
                     <td className="px-4 py-3">
@@ -437,7 +449,7 @@ function ClientDetail({
       <div className="space-y-2">
         <p className="text-xs font-black uppercase text-muted">Changer le statut</p>
         <div className="grid gap-2">
-          {clientStages.slice(0, 6).map((status) => (
+          {clientStages.map((status) => (
             <button
               key={status}
               className="rounded-lg border border-line bg-card p-3 text-left transition hover:border-blue-soft"
