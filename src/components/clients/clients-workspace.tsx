@@ -17,6 +17,7 @@ import type { Client, ClientStatus, Priority } from "@/types";
 import { Metric } from "@/components/ui/metric";
 import { InfoRow } from "@/components/ui/info-row";
 import { ViewToggle } from "@/components/ui/view-toggle";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const clientStages: ClientStatus[] = [
   "prospect",
@@ -177,6 +178,15 @@ export function ClientsWorkspace() {
           {filteredClients.map((client) => (
             <ClientCard key={client.id} client={client} onOpen={() => setSelectedId(client.id)} />
           ))}
+          {filteredClients.length === 0 ? (
+            <div className="md:col-span-2 xl:col-span-3">
+              <EmptyState
+                icon={Building2}
+                title={clients.length ? "Aucun client ne correspond aux filtres" : "Aucun client pour l'instant"}
+                hint={clients.length ? "Ajuste ou réinitialise tes filtres." : "Ajoute ton premier client."}
+              />
+            </div>
+          ) : null}
         </section>
       ) : null}
 
