@@ -31,7 +31,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Modal } from "@/components/ui/modal";
 import { Label, Select, TextArea, TextInput } from "@/components/ui/field";
 import { useWorkspace } from "@/components/workspace-provider";
-import { addDaysIso, todayIso } from "@/lib/dates";
+import { APP_TIMEZONE, addDaysIso, todayIso } from "@/lib/dates";
 import { countOverdue } from "@/lib/reminders";
 import { pastelColors } from "@/lib/theme";
 import { getClientName, getInitials } from "@/lib/utils";
@@ -68,7 +68,11 @@ const quickTypes = [
 function todayLabels() {
   const now = new Date();
   return {
+    // Anchored to the app timezone so the server-rendered header matches what the
+    // browser hydrates (a UTC container vs a Paris browser would otherwise differ
+    // around midnight → hydration mismatch + reflash).
     display: new Intl.DateTimeFormat("fr-FR", {
+      timeZone: APP_TIMEZONE,
       day: "numeric",
       month: "long",
       year: "numeric",

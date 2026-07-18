@@ -16,12 +16,27 @@ const PUBLIC_API = new Set(["/api/auth/login", "/api/health", "/api/news/sync"])
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (PUBLIC_PATHS.has(pathname) || PUBLIC_API.has(pathname)) {
+  // These endpoints enforce their own auth (or need none) — never gate/redirect them.
+  if (PUBLIC_API.has(pathname)) {
     return NextResponse.next();
   }
 
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const authenticated = await verifySessionToken(process.env.SESSION_SECRET, token);
+
+  // The login page is public, but an already-authenticated visitor has no reason
+  // to see it — send them into the app (also avoids embedding their data in the
+  // login HTML now that the root layout seeds authenticated renders).
+  if (PUBLIC_PATHS.has(pathname)) {
+    if (authenticated) {
+      const dashboardUrl = request.nextUrl.clone();
+      dashboardUrl.pathname = "/dashboard";
+      dashboardUrl.search = "";
+      return NextResponse.redirect(dashboardUrl);
+    }
+    return NextResponse.next();
+  }
+
   if (authenticated) {
     return NextResponse.next();
   }
