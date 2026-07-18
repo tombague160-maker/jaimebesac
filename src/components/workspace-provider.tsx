@@ -35,17 +35,29 @@ type WorkspaceResponse = {
   versions: Partial<Record<WorkspaceKey, string>>;
 };
 
-export function WorkspaceProvider({ children }: { children: ReactNode }) {
+export function WorkspaceProvider({
+  children,
+  initialData = null,
+  initialVersions = null,
+}: {
+  children: ReactNode;
+  initialData?: WorkspaceData | null;
+  initialVersions?: Partial<Record<WorkspaceKey, string>> | null;
+}) {
   const pathname = usePathname();
-  const [data, setData] = useState<WorkspaceData>(() => createEmptyWorkspace());
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>("loading");
+  // When the server seeded the workspace (authenticated page render), start
+  // already-loaded so the UI renders WITH data — no empty-then-fetch flash and no
+  // redundant round-trip. Otherwise keep the fetch-on-mount behaviour.
+  const seeded = initialData != null;
+  const [data, setData] = useState<WorkspaceData>(() => initialData ?? createEmptyWorkspace());
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>(seeded ? "idle" : "loading");
   const [error, setError] = useState<string | null>(null);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(seeded);
 
   const dataRef = useRef(data);
-  const versionsRef = useRef<Partial<Record<WorkspaceKey, string>>>({});
+  const versionsRef = useRef<Partial<Record<WorkspaceKey, string>>>(initialVersions ?? {});
   const queues = useRef<Partial<Record<WorkspaceKey, Promise<void>>>>({});
-  const loadedRef = useRef(false);
+  const loadedRef = useRef(seeded);
   const pendingWrites = useRef(0);
   const failedWrites = useRef(0);
 
@@ -83,6 +95,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   }, [applyLoaded, fetchWorkspace]);
 
   useEffect(() => {
+    // Server already seeded the data → no initial fetch (avoids the flash).
+    if (seeded) return;
     // The login page renders outside the shell; never load workspace data there.
     if (pathname === "/login") return;
 
@@ -100,7 +114,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, [applyLoaded, fetchWorkspace, pathname]);
+  }, [applyLoaded, fetchWorkspace, pathname, seeded]);
 
   // Revalidate when the tab regains focus — but never while writes are in flight,
   // to avoid reverting optimistic state.
