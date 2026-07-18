@@ -28,6 +28,7 @@ import { formatDate } from "@/lib/utils";
 import type { CalendarEvent, ContentIdea, NewsCategory, NewsItem, NewsStatus, Priority, Publication } from "@/types";
 import { Metric } from "@/components/ui/metric";
 import { InfoRow } from "@/components/ui/info-row";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export function NewsWorkspace() {
   const [items, setItems] = useWorkspaceValue("newsItems");
@@ -295,6 +296,15 @@ export function NewsWorkspace() {
               onIgnore={() => updateStatus(item.id, "ignored", "Actualite ignoree.")}
             />
           ))}
+          {filteredItems.length === 0 ? (
+            <div className="lg:col-span-2">
+              <EmptyState
+                icon={Newspaper}
+                title={items.length ? "Aucune actualité ne correspond aux filtres" : "Aucune actualité pour l'instant"}
+                hint={items.length ? "Ajuste ou réinitialise tes filtres." : "Synchronise tes flux RSS ou ajoute une actu."}
+              />
+            </div>
+          ) : null}
         </div>
 
         <Card>

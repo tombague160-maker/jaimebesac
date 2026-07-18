@@ -30,7 +30,8 @@ aucun P0/P1 exploitable par un anonyme.** Corrigé par lots (S → A → D → R
 - D2 ✅ : **mode sombre** complet — surcharge des tokens sous `.dark`, bouton de bascule (`ui/theme-toggle.tsx`, `useSyncExternalStore`), script anti-flash dans `layout.tsx`, persistance localStorage + respect du système. Overlays/scrollbar/calendrier adaptés. Vérifié clair + sombre.
 - D5 ✅ (via tokens) : eyebrows → `--eyebrow` (#287CA8, AA) ; `muted-soft` remonté (#6B7A85).
 - D6 ✅ : réglage « densité » mort **retiré** (il était trompeur).
-- D3 (à venir) : skeletons de chargement. D4 (à venir) : `EmptyState` partagé sur les grilles principales. D7 (à venir) : `font-black` maîtrisé, kanban unifié, cibles ≥44px, double `<h1>`.
+- D4 ✅ : `EmptyState` partagé (`ui/empty-state.tsx`) branché sur les 4 grilles principales (clients, tournages, news, idées) — distingue « aucune donnée » de « aucun résultat de filtre ».
+- D3 (à venir) : skeletons de chargement. D7 (à venir) : `font-black` maîtrisé, kanban clients unifié, cibles ≥44px, double `<h1>`.
 
 ## Lot R — Refactor structurel *(à venir, différable)*
 - R1 : persistance/CRUD par entité (au lieu du document entier par module). R2 : rendu initial serveur.

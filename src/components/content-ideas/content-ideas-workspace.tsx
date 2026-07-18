@@ -16,6 +16,7 @@ import { formatDate, getClientName } from "@/lib/utils";
 import type { CalendarEvent, ContentFormat, ContentIdea, ContentIdeaStatus, Priority, Publication, PublicationPlatform, Shooting } from "@/types";
 import { Metric } from "@/components/ui/metric";
 import { InfoRow } from "@/components/ui/info-row";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const formats: ContentFormat[] = [
   "Reel Instagram",
@@ -229,6 +230,15 @@ export function ContentIdeasWorkspace() {
             onPlan={() => updateStatus(idea.id, "planned", "Idée planifiée.")}
           />
         ))}
+        {filteredIdeas.length === 0 ? (
+          <div className="md:col-span-2 xl:col-span-3">
+            <EmptyState
+              icon={Lightbulb}
+              title={ideas.length ? "Aucune idée ne correspond aux filtres" : "Aucune idée pour l'instant"}
+              hint={ideas.length ? "Ajuste ou réinitialise tes filtres." : "Crée ta première idée de contenu."}
+            />
+          </div>
+        ) : null}
       </section>
 
       <Drawer

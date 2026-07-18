@@ -16,6 +16,7 @@ import type { Priority, Publication, PublicationPlatform, Shooting, ShootingStat
 import { Metric } from "@/components/ui/metric";
 import { InfoRow } from "@/components/ui/info-row";
 import { ViewToggle } from "@/components/ui/view-toggle";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const shootingStages: ShootingStatus[] = [
   "idea",
@@ -223,6 +224,15 @@ export function ShootingsWorkspace() {
               onOpen={() => setSelectedId(shooting.id)}
             />
           ))}
+          {filteredShootings.length === 0 ? (
+            <div className="md:col-span-2 xl:col-span-3">
+              <EmptyState
+                icon={Clapperboard}
+                title={shootings.length ? "Aucun tournage ne correspond aux filtres" : "Aucun tournage pour l'instant"}
+                hint={shootings.length ? "Ajuste ou réinitialise tes filtres." : "Crée ton premier tournage."}
+              />
+            </div>
+          ) : null}
         </section>
       ) : (
         <section className="premium-scrollbar flex gap-3 overflow-x-auto pb-2">
