@@ -2,7 +2,7 @@
 // so "today" and day arithmetic are identical on the server (UTC container) and
 // in the browser, and never drift by a day around midnight / DST.
 
-const APP_TIMEZONE =
+export const APP_TIMEZONE =
   (typeof process !== "undefined" && process.env.NEXT_PUBLIC_APP_TIMEZONE) || "Europe/Paris";
 
 const isoDateOnly = /^(\d{4})-(\d{2})-(\d{2})/;
