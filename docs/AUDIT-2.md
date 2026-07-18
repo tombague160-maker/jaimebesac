@@ -31,7 +31,8 @@ aucun P0/P1 exploitable par un anonyme.** Corrigé par lots (S → A → D → R
 - D5 ✅ (via tokens) : eyebrows → `--eyebrow` (#287CA8, AA) ; `muted-soft` remonté (#6B7A85).
 - D6 ✅ : réglage « densité » mort **retiré** (il était trompeur).
 - D4 ✅ : `EmptyState` partagé (`ui/empty-state.tsx`) branché sur les 4 grilles principales (clients, tournages, news, idées) — distingue « aucune donnée » de « aucun résultat de filtre ».
-- D3 (à venir) : skeletons de chargement. D7 (à venir) : `font-black` maîtrisé, kanban clients unifié, cibles ≥44px, double `<h1>`.
+- D3 ✅ : barre de chargement globale sous le header (indicateur pendant le chargement, au lieu du flash de zéros).
+- D7 ✅ (l'essentiel) : double `<h1>` corrigé (titre du shell → `<p>`), **kanban clients unifié** (flex + toutes les colonnes), table clients accessible au clavier, panneau « Changer le statut » complet (partner/former/lost enfin atteignables). Différé (large/subjectif) : réduction globale de `font-black`, cibles tactiles ≥44px partout.
 
 ## Lot R — Refactor structurel *(à venir, différable)*
 - R1 : persistance/CRUD par entité (au lieu du document entier par module). R2 : rendu initial serveur.

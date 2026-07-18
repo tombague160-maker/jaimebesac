@@ -350,9 +350,9 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
             </Button>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-bold text-muted">Aujourd&apos;hui · {currentDate.display}</p>
-              <h1 className="truncate text-base font-black text-ink sm:text-lg">
+              <p className="truncate text-base font-black text-ink sm:text-lg">
                 {activeItem?.label ?? "Studio"}
-              </h1>
+              </p>
             </div>
             <button
               className="hidden h-10 min-w-[280px] items-center gap-2 rounded-lg border border-line bg-surface px-3 text-left text-sm text-muted transition hover:border-blue-soft hover:bg-card md:flex"
@@ -371,6 +371,9 @@ function AuthenticatedShell({ children }: { children: React.ReactNode }) {
             </Button>
           </div>
         </header>
+        {saveStatus === "loading" ? (
+          <div className="h-0.5 w-full animate-pulse bg-blue" aria-hidden />
+        ) : null}
         <div className="app-content px-4 py-5 sm:px-6 lg:px-8">{children}</div>
       </main>
 
