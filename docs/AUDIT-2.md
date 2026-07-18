@@ -34,5 +34,14 @@ aucun P0/P1 exploitable par un anonyme.** Corrigé par lots (S → A → D → R
 - D3 ✅ : barre de chargement globale sous le header (indicateur pendant le chargement, au lieu du flash de zéros).
 - D7 ✅ (l'essentiel) : double `<h1>` corrigé (titre du shell → `<p>`), **kanban clients unifié** (flex + toutes les colonnes), table clients accessible au clavier, panneau « Changer le statut » complet (partner/former/lost enfin atteignables). Différé (large/subjectif) : réduction globale de `font-black`, cibles tactiles ≥44px partout.
 
-## Lot R — Refactor structurel *(à venir, différable)*
-- R1 : persistance/CRUD par entité (au lieu du document entier par module). R2 : rendu initial serveur.
+## Lot R — Refactor structurel
+- R2 ✅ : **rendu serveur des données** — le layout racine (authentifié uniquement) lit le workspace côté
+  serveur et seed le provider : les pages arrivent **avec** leurs chiffres (plus de flash de zéros ni de
+  fetch initial). Échec de lecture → repli sur le fetch client (bannière + réessayer). Un visiteur déjà
+  connecté qui ouvre `/login` est redirigé vers l'app. Vérifié : SSR avec données, zéro fuite sur `/login`,
+  redirections, écritures avec versions seedées, hydratation sans erreur + revue adversaire 5 angles
+  (1 finding P2 corrigé : date du header ancrée sur Europe/Paris).
+- R1 (différé, décision produit) : persistance/CRUD **par élément** (au lieu du document entier par module).
+  Pertinent si multi-utilisateurs ou volumétrie forte ; pour un usage mono-utilisateur, le versionnage par
+  module + 409 couvre déjà la concurrence, et la migration du stockage en prod porte un risque réel de
+  perte pour un bénéfice marginal. À trancher explicitement avant toute mise en chantier.
